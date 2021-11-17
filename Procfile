@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -jar target/dependency/webapp-runner.jar --port $PORT target/musical16.war
+web: java $JAVA_OPTS -Dserver.port=$PORT -jar target/16musical-1.0.jar
