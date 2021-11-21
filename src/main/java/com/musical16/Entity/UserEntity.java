@@ -10,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 
@@ -28,6 +30,9 @@ public class UserEntity extends BaseEntity {
 	
 	@Column(name = "status")
 	private Integer status;
+	
+	@Column(name = "sex")
+	private Integer sex;
 	
 	@Column(name = "email", unique = true)
 	private String email;
@@ -53,6 +58,12 @@ public class UserEntity extends BaseEntity {
 	inverseJoinColumns = @JoinColumn(name = "role_id"))
 	
 	private List<RoleEntity> roles = new ArrayList<>();
+	
+	@OneToOne(mappedBy = "user")
+    private CartEntity cart;
+	
+	@OneToMany(mappedBy = "userOrder")
+	private List<OrderEntity> order = new ArrayList<>();
 
 	public String getUserName() {
 		return userName;
@@ -142,6 +153,31 @@ public class UserEntity extends BaseEntity {
 		this.url = url;
 	}
 
+	public Integer getSex() {
+		return sex;
+	}
+
+	public void setSex(Integer sex) {
+		this.sex = sex;
+	}
+
+	public CartEntity getCart() {
+		return cart;
+	}
+
+	public void setCart(CartEntity cart) {
+		this.cart = cart;
+	}
+
+	public List<OrderEntity> getOrder() {
+		return order;
+	}
+
+	public void setOrder(List<OrderEntity> order) {
+		this.order = order;
+	}
+
+	
 	
 	
 	

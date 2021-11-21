@@ -1,4 +1,4 @@
-package com.musical16.api;
+package com.musical16.api.admin;
 
 import java.io.IOException;
 import java.util.Arrays;

@@ -1,4 +1,5 @@
-package com.musical16.api;
+package com.musical16.api.admin;
+
 
 import java.util.List;
 
@@ -13,31 +14,36 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.musical16.dto.CategoryNewDTO;
 import com.musical16.dto.MessageDTO;
-import com.musical16.service.ICategoryNewService;
+import com.musical16.dto.ProductDTO;
+import com.musical16.service.IProductService;
 
 @RestController
-public class CategoryNewAPI {
+public class ProductAPI {
 	
 	@Autowired
-	private ICategoryNewService categoryNewService;
+	private IProductService productService;
 
-	@GetMapping("/categoryNew")
-	public List<CategoryNewDTO> findAll() {
-		return categoryNewService.findAll();
+	@GetMapping("/product")
+	public List<ProductDTO> findAll() {
+		return productService.findAll();
+	}
+	@GetMapping("/product/{id}")
+	public ProductDTO findOne(@PathVariable("id")long id) {
+		return productService.findOne(id);
+	}
+
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@PostMapping("/product")
+	public MessageDTO save(@RequestBody ProductDTO productDTO, HttpServletRequest req) {
+		return productService.save(productDTO, req);
 	}
 	
 	
 	@PreAuthorize("hasRole('ADMIN')")
-	@PostMapping("/categoryNew")
-	public MessageDTO insert(@RequestBody CategoryNewDTO categoryNew, HttpServletRequest req) {
-		return categoryNewService.save(categoryNew, req);
-	}
-	
-	@PreAuthorize("hasRole('ADMIN')")
-	@DeleteMapping("/categoryNew/{id}")
-	public MessageDTO delete(@PathVariable Long id) {
-		return categoryNewService.delete(id);
+	@DeleteMapping("/product/{id}")
+	public MessageDTO delete(@PathVariable("id") Long id) {
+		return productService.delete(id);
 	}
 }

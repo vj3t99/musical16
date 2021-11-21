@@ -2,21 +2,16 @@ package com.musical16.dto;
 
 public class UpdateUserInfoDTO {
 
+	private String fullname;
 	private String password;
-	private String newPassword;
 	private String address;
 	private String phone;
+	private Integer sex;
 	public String getPassword() {
 		return password;
 	}
 	public void setPassword(String password) {
 		this.password = password;
-	}
-	public String getNewPassword() {
-		return newPassword;
-	}
-	public void setNewPassword(String newPassword) {
-		this.newPassword = newPassword;
 	}
 	public String getAddress() {
 		return address;
@@ -30,5 +25,18 @@ public class UpdateUserInfoDTO {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
+	public Integer getSex() {
+		return sex;
+	}
+	public void setSex(Integer sex) {
+		this.sex = sex;
+	}
+	public String getFullname() {
+		return fullname;
+	}
+	public void setFullname(String fullname) {
+		this.fullname = fullname;
+	}
+	
 	
 }

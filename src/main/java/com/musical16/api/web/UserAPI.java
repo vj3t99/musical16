@@ -1,4 +1,4 @@
-package com.musical16.api;
+package com.musical16.api.web;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.musical16.config.TokenProvider;
+import com.musical16.dto.ChangePassword;
 import com.musical16.dto.ForgotPasswordDTO;
 import com.musical16.dto.LoginDTO;
 import com.musical16.dto.MessageDTO;
@@ -86,7 +87,7 @@ public class UserAPI {
 	        	tokendto.setToken(token);
 	            tokendto.setMessage("Đăng nhập thành công");
 	        }else {
-	        	tokendto.setMessage("Tài khoản chưa được kích hoạt, vui lòng kiểm tra email của bạn để kích hoạt tài khoản");
+	        	tokendto.setMessage("Tài khoản chưa kích hoạt, vui lòng kiểm tra email để kích hoạt");
 	        }
 	        
 		} catch (InternalAuthenticationServiceException e) {
@@ -117,5 +118,10 @@ public class UserAPI {
 	public MessageDTO resetpassword(@RequestParam(value = "token",required = true) String token) {
 		return userService.resetpassword(token);
 		
+	}
+	@PreAuthorize("hasRole('USER')")
+	@PostMapping(value = "/changepassword")
+	public MessageDTO changePassword(@RequestBody ChangePassword user, HttpServletRequest req ) {
+		return userService.changePassword(user,req);
 	}
 }

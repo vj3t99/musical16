@@ -48,6 +48,12 @@ public class ProductEntity extends BaseEntity{
 	
 	@Column(name = "wanrranty")
 	private Integer wanrranty;
+	
+	@OneToMany(mappedBy = "product")
+	private List<CartDetailEntity> cartDetail = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "productOrder")
+	private List<OrderDetailEntity> orderDetail = new ArrayList<>();
 
 	public String getName() {
 		return name;
@@ -135,6 +141,22 @@ public class ProductEntity extends BaseEntity{
 
 	public void setCategories(CategoryEntity categories) {
 		this.categories = categories;
+	}
+
+	public List<CartDetailEntity> getCartDetail() {
+		return cartDetail;
+	}
+
+	public void setCartDetail(List<CartDetailEntity> cartDetail) {
+		this.cartDetail = cartDetail;
+	}
+
+	public List<OrderDetailEntity> getOrderDetail() {
+		return orderDetail;
+	}
+
+	public void setOrderDetail(List<OrderDetailEntity> orderDetail) {
+		this.orderDetail = orderDetail;
 	}
 	
 	

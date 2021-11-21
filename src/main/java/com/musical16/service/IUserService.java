@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.musical16.dto.ChangePassword;
 import com.musical16.dto.ForgotPasswordDTO;
 import com.musical16.dto.MessageDTO;
 import com.musical16.dto.RegisterDTO;
@@ -27,4 +28,7 @@ public interface IUserService {
 	public MessageDTO save(UpdateUserInfoDTO user, HttpServletRequest req) throws Exception;
 
 	public MessageDTO uploadImage(MultipartFile file, HttpServletRequest req);
+
+	public MessageDTO changePassword(ChangePassword user, HttpServletRequest req);
+	
 }

@@ -16,6 +16,8 @@ public class UserDTO extends BaseDTO{
 	private String url;
 	
 	private String phone;
+	
+	private Integer sex;
 
 	public String getUserName() {
 		return userName;
@@ -71,6 +73,14 @@ public class UserDTO extends BaseDTO{
 
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+
+	public Integer getSex() {
+		return sex;
+	}
+
+	public void setSex(Integer sex) {
+		this.sex = sex;
 	}
 	
 	

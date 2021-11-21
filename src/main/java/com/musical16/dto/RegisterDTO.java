@@ -8,11 +8,11 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class RegisterDTO {
 
 	@NotEmpty(message = "Username không được rỗng !")
-	@Size(min = 6, max = 32, message = "Username phải trong khoảng 6 đến 32 kí tự")
+	@Size(min = 5, max = 32, message = "Username phải trong khoảng 5 đến 32 kí tự")
 	private String username;
 
 	@NotEmpty(message = "Password không được rỗng !")
-	@Size(min = 6, message = "Pasword phải 6 kí tự trở lên")
+	@Size(min = 5, message = "Pasword phải 5 kí tự trở lên")
 	private String password;
 
 	@NotEmpty(message = "fullname không được rỗng !")
@@ -23,6 +23,8 @@ public class RegisterDTO {
 	private String email;
 	
 	private String address;
+	
+	private Integer sex;
 	
 	@NotEmpty(message = "Bạn chưa nhập số điện thoại !")
 	@Size(min = 9, max = 11, message = "Số điện thoại không hợp lệ")
@@ -76,4 +78,13 @@ public class RegisterDTO {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
+
+	public Integer getSex() {
+		return sex;
+	}
+
+	public void setSex(Integer sex) {
+		this.sex = sex;
+	}
+	
 }

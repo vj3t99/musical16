@@ -16,19 +16,23 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.musical16.Entity.CartEntity;
 import com.musical16.Entity.RoleEntity;
 import com.musical16.Entity.UserEntity;
 import com.musical16.converter.UserConverter;
+import com.musical16.dto.ChangePassword;
 import com.musical16.dto.ForgotPasswordDTO;
 import com.musical16.dto.MessageDTO;
 import com.musical16.dto.RegisterDTO;
 import com.musical16.dto.UpdateUserInfoDTO;
 import com.musical16.dto.UserDTO;
+import com.musical16.repository.CartRepository;
 import com.musical16.repository.UserRepository;
 import com.musical16.service.IFileStorageService;
 import com.musical16.service.IHelpService;
@@ -44,6 +48,9 @@ public class UserService implements UserDetailsService, IUserService{
 
     @Autowired
     private UserRepository userRepository;
+    
+	@Autowired
+	private CartRepository cartRepository;
     
     @Autowired
     private UserConverter userConverter;
@@ -75,6 +82,7 @@ public class UserService implements UserDetailsService, IUserService{
 				nUser.setImage(image);
 				nUser.setUrl(helpService.getSiteURL(req)+"/downloadFile/"+image);
 		        RoleEntity role = roleService.findByName("USER");
+		        nUser.setPassword(bcryptEncoder.encode(user.getPassword()));
 		        nUser.setCreatedBy(nUser.getUserName());
 		        nUser.setCreatedDate(new java.sql.Timestamp(System.currentTimeMillis()));
 		        List<RoleEntity> roleSet = new ArrayList<>();
@@ -95,7 +103,7 @@ public class UserService implements UserDetailsService, IUserService{
 					e.printStackTrace();
 				}
 		         userRepository.save(nUser);
-		         message.setMessage("Đăng kí thành công. Vui lòng check mail của bạn để kích hoạt tài khoản !");
+		         message.setMessage("Đăng kí thành công, vui lòng kiểm tra email để kích hoạt tài khoản !");
 			}
 		} catch (DataIntegrityViolationException e) {
 			message.setMessage("Username hoặc email đã tồn tại");
@@ -121,14 +129,19 @@ public class UserService implements UserDetailsService, IUserService{
 	public String activation(String token) {
 		String message ;
 		UserEntity user = userRepository.findByToken(token);
-		if(user!=null) {
+		if(user!=null&&user.getStatus().equals(0)) {
 			message = "kích hoạt thành công";
 			user.setToken("");
 			user.setStatus(1);
 			userRepository.save(user);
+			CartEntity cart = new CartEntity();
+			cart.setUser(user);
+			cart.setTotalPrice(0.0);
+			cart.setTotalQuantity(0);
+			cartRepository.save(cart);
 			
 		}else {
-			message = "mã kích hoạt không tồn tại";
+			message = "mã kích hoạt không tồn tại hoặc tài khoản đã được kích hoạt";
 		}
 		
 		return message;
@@ -172,7 +185,7 @@ public class UserService implements UserDetailsService, IUserService{
 	public MessageDTO resetpassword(String token) {
 		String message;
 		UserEntity user = userRepository.findByToken(token);
-		if(user!=null) {
+		if(user!=null&&user.getStatus().equals(1)) {
 			String password = RandomStringUtils.random(10, true, true);
 			user.setPassword(bcryptEncoder.encode(password));
 			userRepository.save(user);
@@ -183,7 +196,7 @@ public class UserService implements UserDetailsService, IUserService{
 			}
 			message = "Thành công, tài khoản của ban đã được reset password vui lòng kiểm tra mail của bạn để lấy password mới";
 		}else {
-			message = "Link không hợp lệ";
+			message = "Link không hợp lệ hoặc tài khoản chưa được kích hoạt";
 		}
 		return new MessageDTO(message);
 	}
@@ -200,8 +213,9 @@ public class UserService implements UserDetailsService, IUserService{
 	public MessageDTO save(UpdateUserInfoDTO user, HttpServletRequest req) {
 		UserEntity nUser = userRepository.findByUserName(helpService.getName(req));
 		String message;
-		if(bcryptEncoder.encode(user.getPassword()).equals(nUser.getPassword())) {
-			nUser.setPassword(user.getNewPassword());
+		if(BCrypt.checkpw(user.getPassword(), nUser.getPassword())) {
+			nUser.setFullName(user.getFullname());
+			nUser.setSex(user.getSex());
 			nUser.setAddress(user.getAddress());
 			nUser.setPhone(user.getPhone());
 			userRepository.save(nUser);
@@ -225,6 +239,21 @@ public class UserService implements UserDetailsService, IUserService{
 		user.setUrl(url);
 		userRepository.save(user);
 		return new MessageDTO("Thêm ảnh thành công");
+	}
+
+
+	@Override
+	public MessageDTO changePassword(ChangePassword user, HttpServletRequest req) {
+		UserEntity nUser = userRepository.findByUserName(helpService.getName(req));
+		String message;	
+		if(BCrypt.checkpw(user.getPassword(), nUser.getPassword())) {
+			nUser.setPassword(bcryptEncoder.encode(user.getNewPassword()));
+			userRepository.save(nUser);
+			message = "Thay đổi mật khẩu thành công";
+		}else {
+			message = "Mật khẩu cũ không chính xác";
+		}
+		return new MessageDTO(message);
 	}
 
 }
