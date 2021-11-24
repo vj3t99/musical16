@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -70,13 +71,15 @@ public class UserService implements UserDetailsService, IUserService{
 
 
 	@Override
-	public ResponseDTO<UserDTO> save(RegisterDTO user, HttpServletRequest req) throws Exception,MethodArgumentNotValidException {
+	public ResponseEntity<?> save(RegisterDTO user, HttpServletRequest req) throws Exception,MethodArgumentNotValidException {
 		ResponseDTO<UserDTO> response = new ResponseDTO<>();
 		try {
 			if(userRepository.findByUserName(user.getUsername())!=null) {
 				response.setMessage("Username đã tồn tại");
+				return ResponseEntity.badRequest().body(response);
 			}else if(userRepository.findByEmail(user.getEmail())!=null){
 				response.setMessage("Email đã tồn tại");
+				return ResponseEntity.badRequest().body(response);
 			}else {
 				UserEntity nUser = userConverter.toEntity(user);
 				String image = "default.png";
@@ -109,8 +112,9 @@ public class UserService implements UserDetailsService, IUserService{
 			}
 		} catch (DataIntegrityViolationException e) {
 			response.setMessage("Username hoặc email đã tồn tại");
+			return ResponseEntity.badRequest().body(response);
 		}
-        return response;
+        return ResponseEntity.ok(response);
 	}
 
 

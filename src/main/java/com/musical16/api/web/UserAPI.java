@@ -22,7 +22,6 @@ import com.musical16.dto.request.LoginDTO;
 import com.musical16.dto.request.RegisterDTO;
 import com.musical16.dto.request.UpdateUserInfoDTO;
 import com.musical16.dto.response.MessageDTO;
-import com.musical16.dto.response.ResponseDTO;
 import com.musical16.dto.response.TokenDTO;
 import com.musical16.dto.response.UserDTO;
 import com.musical16.repository.UserRepository;
@@ -97,18 +96,21 @@ public class UserAPI {
 	            tokendto.setUser(userConverter.toDTO(userRepository.findByUserName(name)));
 	        }else {
 	        	tokendto.setMessage("Tài khoản chưa kích hoạt, vui lòng kiểm tra email để kích hoạt");
+	        	return ResponseEntity.badRequest().body(tokendto);
 	        }
 	        
 		} catch (InternalAuthenticationServiceException e) {
 			tokendto.setMessage("Không tìm thấy Username");
+			return ResponseEntity.badRequest().body(tokendto);
 		} catch (BadCredentialsException e2) {
 			tokendto.setMessage("Sai password");
+			return ResponseEntity.badRequest().body(tokendto);
 		}
 		return ResponseEntity.ok(tokendto);
 	}
 	
 	@PostMapping(value="/register")
-    public ResponseDTO<UserDTO> saveUser(@Valid @RequestBody RegisterDTO user, HttpServletRequest req) throws Exception{
+    public ResponseEntity<?> saveUser(@Valid @RequestBody RegisterDTO user, HttpServletRequest req) throws Exception{
         return userService.save(user,req);
 	}
 	
