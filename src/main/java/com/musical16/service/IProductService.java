@@ -4,9 +4,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-
-import com.musical16.dto.MessageDTO;
-import com.musical16.dto.ProductDTO;
+import com.musical16.dto.product.ProductDTO;
+import com.musical16.dto.response.MessageDTO;
 
 public interface IProductService {
 	

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.musical16.dto.MessageDTO;
-import com.musical16.dto.ProductDTO;
+import com.musical16.dto.product.ProductDTO;
+import com.musical16.dto.response.MessageDTO;
 import com.musical16.service.IProductService;
 
 @RestController

@@ -62,8 +62,20 @@ public class UserEntity extends BaseEntity {
 	@OneToOne(mappedBy = "user")
     private CartEntity cart;
 	
-	@OneToMany(mappedBy = "userOrder")
-	private List<OrderEntity> order = new ArrayList<>();
+	@OneToMany(mappedBy = "user")
+	private List<OrdersEntity> order = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "user")
+	private List<CommentEntity> comment = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "user")
+	private List<CommentReplyEntity> commentReply = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "user")
+	private List<RateEntity> rate = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "user")
+	private List<RateReplyEntity> rateReply = new ArrayList<>();
 
 	public String getUserName() {
 		return userName;
@@ -169,14 +181,48 @@ public class UserEntity extends BaseEntity {
 		this.cart = cart;
 	}
 
-	public List<OrderEntity> getOrder() {
+	public List<OrdersEntity> getOrder() {
 		return order;
 	}
 
-	public void setOrder(List<OrderEntity> order) {
+	public void setOrder(List<OrdersEntity> order) {
 		this.order = order;
 	}
 
+	public List<CommentEntity> getComment() {
+		return comment;
+	}
+
+	public void setComment(List<CommentEntity> comment) {
+		this.comment = comment;
+	}
+
+	public List<CommentReplyEntity> getCommentReply() {
+		return commentReply;
+	}
+
+	public void setCommentReply(List<CommentReplyEntity> commentReply) {
+		this.commentReply = commentReply;
+	}
+
+	public List<RateEntity> getRate() {
+		return rate;
+	}
+
+	public void setRate(List<RateEntity> rate) {
+		this.rate = rate;
+	}
+
+	public List<RateReplyEntity> getRateReply() {
+		return rateReply;
+	}
+
+	public void setRateReply(List<RateReplyEntity> rateReply) {
+		this.rateReply = rateReply;
+	}
+
+	
+	
 	
 	
 	

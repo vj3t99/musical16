@@ -19,7 +19,7 @@ public class OrderDetailEntity{
 	
 	@ManyToOne
 	@JoinColumn(name = "order_id")
-	private OrderEntity order;
+	private OrdersEntity order;
 	
 	@ManyToOne
 	@JoinColumn(name = "product_id")
@@ -30,21 +30,31 @@ public class OrderDetailEntity{
 	
 	@Column(name = "price")
 	private Double price;
+	
+	
 
-	public OrderEntity getOrder() {
-		return order;
+	public Long getId() {
+		return id;
 	}
 
-	public void setOrder(OrderEntity order) {
-		this.order = order;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public ProductEntity getProduct() {
 		return productOrder;
 	}
 
-	public void setProduct(ProductEntity productOrder) {
-		this.productOrder = productOrder;
+	public void setProduct(ProductEntity product) {
+		this.productOrder = product;
+	}
+
+	public OrdersEntity getOrder() {
+		return order;
+	}
+
+	public void setOrder(OrdersEntity order) {
+		this.order = order;
 	}
 
 	public Integer getQuantity() {

@@ -4,8 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.musical16.dto.ImageDTO;
-import com.musical16.dto.MessageDTO;
+import com.musical16.dto.product.ImageDTO;
+import com.musical16.dto.response.MessageDTO;
 
 public interface IImageService {
 

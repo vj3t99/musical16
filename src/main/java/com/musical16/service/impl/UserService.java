@@ -26,12 +26,13 @@ import com.musical16.Entity.CartEntity;
 import com.musical16.Entity.RoleEntity;
 import com.musical16.Entity.UserEntity;
 import com.musical16.converter.UserConverter;
-import com.musical16.dto.ChangePassword;
-import com.musical16.dto.ForgotPasswordDTO;
-import com.musical16.dto.MessageDTO;
-import com.musical16.dto.RegisterDTO;
-import com.musical16.dto.UpdateUserInfoDTO;
-import com.musical16.dto.UserDTO;
+import com.musical16.dto.request.ChangePassword;
+import com.musical16.dto.request.ForgotPasswordDTO;
+import com.musical16.dto.request.RegisterDTO;
+import com.musical16.dto.request.UpdateUserInfoDTO;
+import com.musical16.dto.response.MessageDTO;
+import com.musical16.dto.response.ResponseDTO;
+import com.musical16.dto.response.UserDTO;
 import com.musical16.repository.CartRepository;
 import com.musical16.repository.UserRepository;
 import com.musical16.service.IFileStorageService;
@@ -69,13 +70,13 @@ public class UserService implements UserDetailsService, IUserService{
 
 
 	@Override
-	public MessageDTO save(RegisterDTO user, HttpServletRequest req) throws Exception,MethodArgumentNotValidException {
-		MessageDTO message = new MessageDTO();
+	public ResponseDTO<UserDTO> save(RegisterDTO user, HttpServletRequest req) throws Exception,MethodArgumentNotValidException {
+		ResponseDTO<UserDTO> response = new ResponseDTO<>();
 		try {
 			if(userRepository.findByUserName(user.getUsername())!=null) {
-				message.setMessage("Username đã tồn tại");
+				response.setMessage("Username đã tồn tại");
 			}else if(userRepository.findByEmail(user.getEmail())!=null){
-				message.setMessage("Email đã tồn tại");
+				response.setMessage("Email đã tồn tại");
 			}else {
 				UserEntity nUser = userConverter.toEntity(user);
 				String image = "default.png";
@@ -93,7 +94,7 @@ public class UserService implements UserDetailsService, IUserService{
 //		        }
 //		        UUID token = UUID.randomUUID();
 //				nUser.setToken(token.toString());
-		        String token = RandomStringUtils.random(10, true, true);
+		        String token = RandomStringUtils.random(20, true, true);
 		        nUser.setToken(token);
 		        nUser.setRoles(roleSet);
 		        String link = helpService.getSiteURL(req) + "/activation?token=" + nUser.getToken();
@@ -103,12 +104,13 @@ public class UserService implements UserDetailsService, IUserService{
 					e.printStackTrace();
 				}
 		         userRepository.save(nUser);
-		         message.setMessage("Đăng kí thành công, vui lòng kiểm tra email để kích hoạt tài khoản !");
+		         response.setMessage("Đăng kí thành công, vui lòng kiểm tra email để kích hoạt tài khoản !");
+		         response.setObject(userConverter.toDTO(nUser));
 			}
 		} catch (DataIntegrityViolationException e) {
-			message.setMessage("Username hoặc email đã tồn tại");
+			response.setMessage("Username hoặc email đã tồn tại");
 		}
-        return message;
+        return response;
 	}
 
 

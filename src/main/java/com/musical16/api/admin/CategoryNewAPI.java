@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.musical16.dto.CategoryNewDTO;
-import com.musical16.dto.MessageDTO;
+import com.musical16.dto.news.CategoryNewDTO;
+import com.musical16.dto.response.MessageDTO;
 import com.musical16.service.ICategoryNewService;
 
 @RestController

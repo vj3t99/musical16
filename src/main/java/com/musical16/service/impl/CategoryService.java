@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.musical16.Entity.CategoryEntity;
 import com.musical16.converter.CategoryConverter;
-import com.musical16.dto.CategoryDTO;
-import com.musical16.dto.MessageDTO;
+import com.musical16.dto.product.CategoryDTO;
+import com.musical16.dto.response.MessageDTO;
 import com.musical16.repository.CategoryRepository;
 import com.musical16.service.ICategoryService;
 import com.musical16.service.IHelpService;

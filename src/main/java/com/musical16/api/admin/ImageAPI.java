@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.musical16.dto.ImageDTO;
-import com.musical16.dto.MessageDTO;
+import com.musical16.dto.product.ImageDTO;
+import com.musical16.dto.response.MessageDTO;
 import com.musical16.service.IFileStorageService;
 import com.musical16.service.IImageService;
 

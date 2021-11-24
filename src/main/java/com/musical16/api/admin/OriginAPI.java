@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.musical16.dto.MessageDTO;
-import com.musical16.dto.OriginDTO;
+import com.musical16.dto.product.OriginDTO;
+import com.musical16.dto.response.MessageDTO;
 import com.musical16.service.IOriginService;
 
 @RestController

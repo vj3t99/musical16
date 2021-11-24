@@ -3,7 +3,7 @@ package com.musical16.dto.cart;
 
 import javax.validation.constraints.Min;
 import com.musical16.dto.BaseDTO;
-import com.musical16.dto.ProductDTO;
+import com.musical16.dto.product.ProductDTO;
 
 public class CartDetailDTO extends BaseDTO{
 

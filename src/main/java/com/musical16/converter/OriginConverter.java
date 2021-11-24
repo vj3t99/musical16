@@ -3,7 +3,7 @@ package com.musical16.converter;
 import org.springframework.stereotype.Component;
 
 import com.musical16.Entity.OriginEntity;
-import com.musical16.dto.OriginDTO;
+import com.musical16.dto.product.OriginDTO;
 
 @Component
 public class OriginConverter {

@@ -14,9 +14,9 @@ import com.musical16.Entity.CartEntity;
 import com.musical16.Entity.ProductEntity;
 import com.musical16.Entity.UserEntity;
 import com.musical16.converter.CartDetailConverter;
-import com.musical16.dto.MessageDTO;
 import com.musical16.dto.cart.CartDTO;
 import com.musical16.dto.cart.CartDetailDTO;
+import com.musical16.dto.response.MessageDTO;
 import com.musical16.repository.CartDetailRepository;
 import com.musical16.repository.CartRepository;
 import com.musical16.repository.ProductRepository;
@@ -139,10 +139,11 @@ public class CartService implements ICartService {
 	private void updateCart(CartEntity cart) {
 		Integer Quantity = 0;
 		Double Price = 0.0;
-		for(CartDetailEntity each : cart.getCartDetail()) {
-			Quantity += each.getQuantity();
-			Price += each.getPrice();
-			
+		if(cart!=null) {
+			for(CartDetailEntity each : cart.getCartDetail()) {
+				Quantity += each.getQuantity();
+				Price += each.getPrice();		
+			}	
 		}
 		cart.setTotalQuantity(Quantity);
 		cart.setTotalPrice(Price);
@@ -155,11 +156,14 @@ public class CartService implements ICartService {
 		MessageDTO message = new MessageDTO();
 		CartEntity cart = cartRepository.findByUser(userRepository.findByUserName(helpService.getName(req)));
 		if(cart!=null) {
-			for(CartDetailEntity each : cart.getCartDetail()){
-				if(id.equals(each.getId())) {
+			List<CartDetailEntity> list = cartDetailRepository.findByCartAndProduct(cart, productRepository.findOne(id));
+			if(!list.isEmpty()) {
+				for(CartDetailEntity each : list) {
 					cartDetailRepository.delete(each);
-					message.setMessage("Xóa sản phẩm khỏi giỏ hàng thành công");
 				}
+				message.setMessage("Xóa sản phẩm thành công khỏi giỏ hàng");
+			}else {
+				message.setMessage("Sản phẩm này không có trong giỏ hàng");
 			}
 			updateCart(cart);
 		}else {

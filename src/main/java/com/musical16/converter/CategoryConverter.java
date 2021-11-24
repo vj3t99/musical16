@@ -3,7 +3,7 @@ package com.musical16.converter;
 import org.springframework.stereotype.Component;
 
 import com.musical16.Entity.CategoryEntity;
-import com.musical16.dto.CategoryDTO;
+import com.musical16.dto.product.CategoryDTO;
 
 @Component
 public class CategoryConverter {

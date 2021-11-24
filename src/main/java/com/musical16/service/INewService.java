@@ -6,8 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.musical16.dto.MessageDTO;
-import com.musical16.dto.NewDTO;
+import com.musical16.dto.news.NewDTO;
+import com.musical16.dto.response.MessageDTO;
 
 public interface INewService {
 

@@ -1,12 +1,12 @@
 package com.musical16.dto.order;
 
-import com.musical16.dto.ProductDTO;
+import com.musical16.dto.product.ProductDTO;
 
 public class OrderDetailDTO {
 
 	private Long id;
 	
-	private OrderDTO order;
+	private Long orderId;
 	
 	private ProductDTO product;
 	
@@ -22,13 +22,12 @@ public class OrderDetailDTO {
 		this.id = id;
 	}
 
-
-	public OrderDTO getOrder() {
-		return order;
+	public Long getOrderId() {
+		return orderId;
 	}
 
-	public void setOrder(OrderDTO order) {
-		this.order = order;
+	public void setOrderId(Long orderId) {
+		this.orderId = orderId;
 	}
 
 	public ProductDTO getProduct() {

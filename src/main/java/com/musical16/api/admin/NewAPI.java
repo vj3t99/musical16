@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.musical16.dto.MessageDTO;
-import com.musical16.dto.NewDTO;
+import com.musical16.dto.news.NewDTO;
+import com.musical16.dto.response.MessageDTO;
 import com.musical16.service.INewService;
 
 @RestController

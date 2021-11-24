@@ -3,12 +3,11 @@ package com.musical16.dto.order;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.musical16.Entity.UserEntity;
 import com.musical16.dto.BaseDTO;
 
 public class OrderDTO extends BaseDTO{
 
-	private UserEntity user;
+	private Long userId;
 	
 
 	private List<OrderDetailDTO> orderDetail = new ArrayList<>();
@@ -33,15 +32,16 @@ public class OrderDTO extends BaseDTO{
 	
 
 	private Integer status;
-
-
-	public UserEntity getUser() {
-		return user;
+	
+	
+	
+	public Long getUserId() {
+		return userId;
 	}
 
 
-	public void setUser(UserEntity user) {
-		this.user = user;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 

@@ -15,14 +15,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.musical16.config.TokenProvider;
-import com.musical16.dto.ChangePassword;
-import com.musical16.dto.ForgotPasswordDTO;
-import com.musical16.dto.LoginDTO;
-import com.musical16.dto.MessageDTO;
-import com.musical16.dto.RegisterDTO;
-import com.musical16.dto.TokenDTO;
-import com.musical16.dto.UpdateUserInfoDTO;
-import com.musical16.dto.UserDTO;
+import com.musical16.converter.UserConverter;
+import com.musical16.dto.request.ChangePassword;
+import com.musical16.dto.request.ForgotPasswordDTO;
+import com.musical16.dto.request.LoginDTO;
+import com.musical16.dto.request.RegisterDTO;
+import com.musical16.dto.request.UpdateUserInfoDTO;
+import com.musical16.dto.response.MessageDTO;
+import com.musical16.dto.response.ResponseDTO;
+import com.musical16.dto.response.TokenDTO;
+import com.musical16.dto.response.UserDTO;
+import com.musical16.repository.UserRepository;
 import com.musical16.service.IHelpService;
 import com.musical16.service.IUserService;
 
@@ -37,6 +40,11 @@ public class UserAPI {
 	@Autowired
 	private TokenProvider tokenProvider;
 	
+	@Autowired
+	private UserConverter userConverter;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	@Autowired
     private AuthenticationManager authenticationManager;
@@ -86,6 +94,7 @@ public class UserAPI {
 	        if(userService.getByStatus(name)==1) {
 	        	tokendto.setToken(token);
 	            tokendto.setMessage("Đăng nhập thành công");
+	            tokendto.setUser(userConverter.toDTO(userRepository.findByUserName(name)));
 	        }else {
 	        	tokendto.setMessage("Tài khoản chưa kích hoạt, vui lòng kiểm tra email để kích hoạt");
 	        }
@@ -99,7 +108,7 @@ public class UserAPI {
 	}
 	
 	@PostMapping(value="/register")
-    public MessageDTO saveUser(@Valid @RequestBody RegisterDTO user, HttpServletRequest req) throws Exception{
+    public ResponseDTO<UserDTO> saveUser(@Valid @RequestBody RegisterDTO user, HttpServletRequest req) throws Exception{
         return userService.save(user,req);
 	}
 	

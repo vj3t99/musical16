@@ -4,8 +4,8 @@ package com.musical16.converter;
 import org.springframework.stereotype.Component;
 
 import com.musical16.Entity.UserEntity;
-import com.musical16.dto.RegisterDTO;
-import com.musical16.dto.UserDTO;
+import com.musical16.dto.request.RegisterDTO;
+import com.musical16.dto.response.UserDTO;
 
 
 @Component

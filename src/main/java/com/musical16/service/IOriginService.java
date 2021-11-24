@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.musical16.dto.MessageDTO;
-import com.musical16.dto.OriginDTO;
+import com.musical16.dto.product.OriginDTO;
+import com.musical16.dto.response.MessageDTO;
 
 public interface IOriginService {
 

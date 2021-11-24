@@ -3,7 +3,7 @@ package com.musical16.converter;
 import org.springframework.stereotype.Component;
 
 import com.musical16.Entity.NewEntity;
-import com.musical16.dto.NewDTO;
+import com.musical16.dto.news.NewDTO;
 
 @Component
 public class NewConverter {

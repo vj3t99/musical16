@@ -12,8 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.musical16.Entity.NewEntity;
 import com.musical16.converter.NewConverter;
-import com.musical16.dto.MessageDTO;
-import com.musical16.dto.NewDTO;
+import com.musical16.dto.news.NewDTO;
+import com.musical16.dto.response.MessageDTO;
 import com.musical16.repository.CategoryNewRepository;
 import com.musical16.repository.NewRepository;
 import com.musical16.service.IFileStorageService;

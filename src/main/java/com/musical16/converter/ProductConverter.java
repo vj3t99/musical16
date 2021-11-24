@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 import com.musical16.Entity.ImageEntity;
 import com.musical16.Entity.ProductEntity;
-import com.musical16.dto.ImageDTO;
-import com.musical16.dto.ProductDTO;
+import com.musical16.dto.product.ImageDTO;
+import com.musical16.dto.product.ProductDTO;
 import com.musical16.repository.CategoryRepository;
 import com.musical16.repository.OriginRepository;
 

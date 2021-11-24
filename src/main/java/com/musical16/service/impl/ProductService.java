@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 import com.musical16.Entity.ImageEntity;
 import com.musical16.Entity.ProductEntity;
 import com.musical16.converter.ProductConverter;
-import com.musical16.dto.MessageDTO;
-import com.musical16.dto.ProductDTO;
+import com.musical16.dto.product.ProductDTO;
+import com.musical16.dto.response.MessageDTO;
 import com.musical16.repository.CategoryRepository;
 import com.musical16.repository.ImageRepository;
 import com.musical16.repository.OriginRepository;
@@ -50,7 +50,7 @@ public class ProductService implements IProductService{
 	
 	@Override
 	public List<ProductDTO> findAll() {
-		List<ProductEntity> e = productRepository.findAll();
+		List<ProductEntity> e = productRepository.findAllByOrderByIdDesc();
 		List<ProductDTO> dto = new ArrayList<>();
 		for(ProductEntity each : e) {
 			ProductDTO term = productConverter.toDTO(each);

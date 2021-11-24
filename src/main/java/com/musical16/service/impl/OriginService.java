@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.musical16.Entity.OriginEntity;
 import com.musical16.converter.OriginConverter;
-import com.musical16.dto.MessageDTO;
-import com.musical16.dto.OriginDTO;
+import com.musical16.dto.product.OriginDTO;
+import com.musical16.dto.response.MessageDTO;
 import com.musical16.repository.OriginRepository;
 import com.musical16.service.IOriginService;
 
