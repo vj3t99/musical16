@@ -107,8 +107,15 @@ public class ProductService implements IProductService{
 			
 		}finally {
 			
-			Sort sort = new Sort(listorders);
-			Pageable pageable = new PageRequest(index -1, PAGE_LIMIT,sort);
+			
+			Pageable pageable;
+			if(listorders.size()!=0) {
+				Sort sort = new Sort(listorders);
+				pageable = new PageRequest(index -1, PAGE_LIMIT,sort);
+			}else {
+				pageable = new PageRequest(index -1, PAGE_LIMIT);
+			}
+			
 			List<ProductDTO> list = new ArrayList<>();
 			org.springframework.data.domain.Page<ProductEntity> listEntity = productRepository.findAll(pageable);
 			for(ProductEntity each : listEntity) {
