@@ -100,10 +100,10 @@ public class UserAPI {
 	        }
 	        
 		} catch (InternalAuthenticationServiceException e) {
-			tokendto.setMessage("Không tìm thấy Username");
+			tokendto.setMessage("Thông tin đăng nhập không hợp lệ");
 			return ResponseEntity.badRequest().body(tokendto);
 		} catch (BadCredentialsException e2) {
-			tokendto.setMessage("Sai password");
+			tokendto.setMessage("Thông tin đăng nhập không hợp lệ");
 			return ResponseEntity.badRequest().body(tokendto);
 		}
 		return ResponseEntity.ok(tokendto);

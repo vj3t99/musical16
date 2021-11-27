@@ -75,7 +75,7 @@ public class UserService implements UserDetailsService, IUserService{
 		ResponseDTO<UserDTO> response = new ResponseDTO<>();
 		try {
 			if(userRepository.findByUserName(user.getUsername())!=null) {
-				response.setMessage("Username đã tồn tại");
+				response.setMessage("Tên đăng nhập đã tồn tại");
 				return ResponseEntity.badRequest().body(response);
 			}else if(userRepository.findByEmail(user.getEmail())!=null){
 				response.setMessage("Email đã tồn tại");
@@ -111,7 +111,7 @@ public class UserService implements UserDetailsService, IUserService{
 		         response.setObject(userConverter.toDTO(nUser));
 			}
 		} catch (DataIntegrityViolationException e) {
-			response.setMessage("Username hoặc email đã tồn tại");
+			response.setMessage("Tên đăng nhập hoặc email đã tồn tại");
 			return ResponseEntity.badRequest().body(response);
 		}
         return ResponseEntity.ok(response);
@@ -200,7 +200,7 @@ public class UserService implements UserDetailsService, IUserService{
 			} catch (MessagingException e) {
 				e.printStackTrace();
 			}
-			message = "Thành công, tài khoản của ban đã được reset password vui lòng kiểm tra mail của bạn để lấy password mới";
+			message = "Thành công, tài khoản của bạn đã được thay đổi mật khẩu vui lòng kiểm tra mail của bạn để lấy mật khẩu mới";
 		}else {
 			message = "Link không hợp lệ hoặc tài khoản chưa được kích hoạt";
 		}

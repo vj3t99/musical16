@@ -1,19 +1,21 @@
 package com.musical16.service;
 
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.musical16.dto.product.ProductDTO;
 import com.musical16.dto.response.MessageDTO;
+import com.musical16.dto.response.Page;
 
 public interface IProductService {
 	
-	public List<ProductDTO> findAll();
+	public Page<ProductDTO> findAll(Integer page);
 
 	public MessageDTO save(ProductDTO productDTO, HttpServletRequest req);
 	
 	public MessageDTO delete(Long id);
 
 	public ProductDTO findOne(long id);
+
+	public Page<ProductDTO> search(String key);
 }

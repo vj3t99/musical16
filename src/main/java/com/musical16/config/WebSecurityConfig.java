@@ -70,7 +70,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
                 .antMatchers("/","/authenticate", "/register","/activation",
                 		"/forgotpassword","/downloadFile/{fileName:.+}",
                 		"/category","/origin","/product","/categoryNew",
-                		"/new","/new/{id}","/resetpassword","/roles").permitAll()
+                		"/new","/new/{id}","/resetpassword","/roles","/search/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint).and()

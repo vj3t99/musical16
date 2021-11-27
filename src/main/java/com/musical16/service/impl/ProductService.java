@@ -7,8 +7,15 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.NullHandling;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import com.musical16.Entity.ImageEntity;
@@ -16,6 +23,7 @@ import com.musical16.Entity.ProductEntity;
 import com.musical16.converter.ProductConverter;
 import com.musical16.dto.product.ProductDTO;
 import com.musical16.dto.response.MessageDTO;
+import com.musical16.dto.response.Page;
 import com.musical16.repository.CategoryRepository;
 import com.musical16.repository.ImageRepository;
 import com.musical16.repository.OriginRepository;
@@ -26,6 +34,9 @@ import com.musical16.service.IProductService;
 
 @Service
 public class ProductService implements IProductService{
+	
+	@Value(value = "${jpa.page.limit}")
+	private int PAGE_LIMIT;
 	
 	@Autowired
 	private ProductConverter productConverter;
@@ -49,14 +60,47 @@ public class ProductService implements IProductService{
 	private IFileStorageService fileStorageService;
 	
 	@Override
-	public List<ProductDTO> findAll() {
-		List<ProductEntity> e = productRepository.findAllByOrderByIdDesc();
-		List<ProductDTO> dto = new ArrayList<>();
-		for(ProductEntity each : e) {
-			ProductDTO term = productConverter.toDTO(each);
-			dto.add(term);			
+	public Page<ProductDTO> search(String key) {
+		Page<ProductDTO> result = new Page<>();
+		List<ProductDTO> list = new ArrayList<>();
+		for(ProductEntity each : productRepository.search(key)) {
+			list.add(productConverter.toDTO(each));
 		}
-		return dto;
+		result.setList(list);
+		return result;
+	}
+	
+	@Override
+	public Page<ProductDTO> findAll(Integer page) {
+		Page<ProductDTO> result = new Page<>();
+		Integer index = null;
+		try {
+			if(page<=0||page==null) {
+				index = 1;
+			}else {
+				index=page;
+			}
+		} catch (NullPointerException e) {
+			index = 1;
+		}finally {
+			Order orders = new Order(Direction.DESC,"id");
+			Order orders2 = new Order(Direction.ASC, "price", NullHandling.NULLS_LAST );
+			List<Order> listorders = new ArrayList<>();
+			listorders.add(orders);
+			listorders.add(orders2);
+			Sort sort = new Sort(listorders);
+			Pageable pageable = new PageRequest(index -1, PAGE_LIMIT,sort);
+			List<ProductDTO> list = new ArrayList<>();
+			org.springframework.data.domain.Page<ProductEntity> listEntity = productRepository.findAll(pageable);
+			for(ProductEntity each : listEntity) {
+				list.add(productConverter.toDTO(each));
+			}
+			result.setPage(index);
+			result.setList(list);
+			result.setTotalPage((int) Math.ceil((double) productRepository.count()/PAGE_LIMIT));
+		}
+		
+		return result;
 	}
 
 	@Override
@@ -142,6 +186,4 @@ public class ProductService implements IProductService{
 		}
 		return product;
 	}
-
-	
 }

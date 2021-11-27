@@ -65,7 +65,7 @@ public class OrderAPI {
 		Page<OrderDTO> order = new Page<>();
 		Integer number = page;
 		order.setPage(page);
-		Pageable pageable = new PageRequest(number - 1, LIMIT_ITEM);
+		Pageable pageable = new PageRequest(number - 1, LIMIT_ITEM );
 		order.setList(ordersService.findAll(pageable));
 		order.setTotalPage((int) Math.ceil((double) ordersService.totalItem()/LIMIT_ITEM));
 		return order;

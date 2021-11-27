@@ -1,7 +1,6 @@
 package com.musical16.api.admin;
 
 
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,10 +11,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.musical16.dto.product.ProductDTO;
 import com.musical16.dto.response.MessageDTO;
+import com.musical16.dto.response.Page;
 import com.musical16.service.IProductService;
 
 @RestController
@@ -23,10 +24,15 @@ public class ProductAPI {
 	
 	@Autowired
 	private IProductService productService;
+	
+	@GetMapping("/search/{key}")
+	public Page<ProductDTO> search(@PathVariable(value = "key",required = false) String key){
+		return productService.search(key);
+	}
 
 	@GetMapping("/product")
-	public List<ProductDTO> findAll() {
-		return productService.findAll();
+	public Page<ProductDTO> findAll(@RequestParam(value ="page", required = false) Integer page) {
+		return productService.findAll(page);
 	}
 	@GetMapping("/product/{id}")
 	public ProductDTO findOne(@PathVariable("id")long id) {
