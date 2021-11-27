@@ -9,7 +9,7 @@ import com.musical16.dto.response.Page;
 
 public interface IProductService {
 	
-	public Page<ProductDTO> findAll(Integer page, String price, String name);
+	public Page<ProductDTO> findAll(Integer page, String[] sort);
 
 	public MessageDTO save(ProductDTO productDTO, HttpServletRequest req);
 	

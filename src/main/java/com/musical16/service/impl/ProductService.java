@@ -14,7 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.domain.Sort.NullHandling;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
@@ -71,10 +70,11 @@ public class ProductService implements IProductService{
 	}
 	
 	@Override
-	public Page<ProductDTO> findAll(Integer page, String price, String name) {
+	public Page<ProductDTO> findAll(Integer page, String[] sort) {
 		Page<ProductDTO> result = new Page<>();
 		Integer index = null;
 		List<Order> listorders = new ArrayList<>();
+		
 		try {
 			try {
 				if(page<=0||page==null) {
@@ -85,23 +85,16 @@ public class ProductService implements IProductService{
 			} catch (NullPointerException e) {
 				index = 1;
 			}
-			try {
-				if(price.equals("thap-den-cao")) {
+			for(String each : sort) {
+				if(each.equals("gia-thap-den-cao")) {
 					listorders.add(new Order(Direction.ASC, "price"));
-				}else if(price.equals("cao-den-thap")) {
+				}else if(each.equals("gia-cao-den-thap")) {
 					listorders.add(new Order(Direction.DESC, "price"));
-				}
-			} catch (NullPointerException e) {
-				
-			}
-			try {
-				if(name.equals("a-den-z")) {
-					listorders.add(new Order(Direction.ASC, "name"));
-				}else if(name.equals("a-den-z")) {
+				}else if(each.equals("z-a")) {
 					listorders.add(new Order(Direction.DESC, "name"));
+				}else if(each.equals("a-z")) {
+					listorders.add(new Order(Direction.ASC, "name"));
 				}
-			} catch (NullPointerException e) {
-				
 			}
 		} catch (NullPointerException e) {
 			
@@ -110,8 +103,8 @@ public class ProductService implements IProductService{
 			
 			Pageable pageable;
 			if(listorders.size()!=0) {
-				Sort sort = new Sort(listorders);
-				pageable = new PageRequest(index -1, PAGE_LIMIT,sort);
+				Sort sorts = new Sort(listorders);
+				pageable = new PageRequest(index -1, PAGE_LIMIT,sorts);
 			}else {
 				pageable = new PageRequest(index -1, PAGE_LIMIT);
 			}
