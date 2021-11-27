@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
+import com.musical16.Entity.CategoryEntity;
 import com.musical16.Entity.ImageEntity;
 import com.musical16.Entity.ProductEntity;
 import com.musical16.converter.ProductConverter;
@@ -70,7 +71,7 @@ public class ProductService implements IProductService{
 	}
 	
 	@Override
-	public Page<ProductDTO> findAll(Integer page, String[] sort) {
+	public Page<ProductDTO> findAll(Long id, Integer page, String[] sort) {
 		Page<ProductDTO> result = new Page<>();
 		Integer index = null;
 		List<Order> listorders = new ArrayList<>();
@@ -108,9 +109,14 @@ public class ProductService implements IProductService{
 			}else {
 				pageable = new PageRequest(index -1, PAGE_LIMIT);
 			}
-			
+			org.springframework.data.domain.Page<ProductEntity> listEntity = null;
 			List<ProductDTO> list = new ArrayList<>();
-			org.springframework.data.domain.Page<ProductEntity> listEntity = productRepository.findAll(pageable);
+			if(id!=null) {
+				CategoryEntity category = categoryRepository.findOne(id);
+				listEntity = productRepository.findByCategories(category, pageable);
+			}else {
+				listEntity = productRepository.findAll(pageable);
+			}
 			for(ProductEntity each : listEntity) {
 				list.add(productConverter.toDTO(each));
 			}
