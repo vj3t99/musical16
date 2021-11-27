@@ -31,8 +31,8 @@ public class ProductAPI {
 	}
 
 	@GetMapping("/product")
-	public Page<ProductDTO> findAll(@RequestParam(value ="page", required = false) Integer page) {
-		return productService.findAll(page);
+	public Page<ProductDTO> findAll(@RequestParam(value ="page", required = false) Integer page, @RequestParam(value = "price", required = false) String price, @RequestParam(value = "name", required = false) String name) {
+		return productService.findAll(page,price,name);
 	}
 	@GetMapping("/product/{id}")
 	public ProductDTO findOne(@PathVariable("id")long id) {

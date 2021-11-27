@@ -71,23 +71,42 @@ public class ProductService implements IProductService{
 	}
 	
 	@Override
-	public Page<ProductDTO> findAll(Integer page) {
+	public Page<ProductDTO> findAll(Integer page, String price, String name) {
 		Page<ProductDTO> result = new Page<>();
 		Integer index = null;
+		List<Order> listorders = new ArrayList<>();
 		try {
-			if(page<=0||page==null) {
+			try {
+				if(page<=0||page==null) {
+					index = 1;
+				}else {
+					index=page;
+				}
+			} catch (NullPointerException e) {
 				index = 1;
-			}else {
-				index=page;
+			}
+			try {
+				if(price.equals("thap-den-cao")) {
+					listorders.add(new Order(Direction.ASC, "price"));
+				}else if(price.equals("cao-den-thap")) {
+					listorders.add(new Order(Direction.DESC, "price"));
+				}
+			} catch (NullPointerException e) {
+				
+			}
+			try {
+				if(name.equals("a-den-z")) {
+					listorders.add(new Order(Direction.ASC, "name"));
+				}else if(name.equals("a-den-z")) {
+					listorders.add(new Order(Direction.DESC, "name"));
+				}
+			} catch (NullPointerException e) {
+				
 			}
 		} catch (NullPointerException e) {
-			index = 1;
+			
 		}finally {
-			Order orders = new Order(Direction.DESC,"id");
-			Order orders2 = new Order(Direction.ASC, "price", NullHandling.NULLS_LAST );
-			List<Order> listorders = new ArrayList<>();
-			listorders.add(orders);
-			listorders.add(orders2);
+			
 			Sort sort = new Sort(listorders);
 			Pageable pageable = new PageRequest(index -1, PAGE_LIMIT,sort);
 			List<ProductDTO> list = new ArrayList<>();
