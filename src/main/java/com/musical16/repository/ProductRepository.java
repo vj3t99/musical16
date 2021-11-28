@@ -22,4 +22,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>{
 	public List<ProductEntity> search(String keyword);
 	
 	Page<ProductEntity> findByCategories(CategoryEntity category, Pageable pageable);
+	
+	List<ProductEntity> findByCategories(CategoryEntity category);
 }
