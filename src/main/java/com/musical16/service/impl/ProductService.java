@@ -114,15 +114,17 @@ public class ProductService implements IProductService{
 			if(id!=null) {
 				CategoryEntity category = categoryRepository.findOne(id);
 				listEntity = productRepository.findByCategories(category, pageable);
+				result.setTotalPage((int) Math.ceil((double) listEntity.getSize()/PAGE_LIMIT));
 			}else {
 				listEntity = productRepository.findAll(pageable);
+				result.setTotalPage((int) Math.ceil((double) productRepository.count()/PAGE_LIMIT));
 			}
 			for(ProductEntity each : listEntity) {
 				list.add(productConverter.toDTO(each));
 			}
 			result.setPage(index);
 			result.setList(list);
-			result.setTotalPage((int) Math.ceil((double) productRepository.count()/PAGE_LIMIT));
+			
 		}
 		
 		return result;
