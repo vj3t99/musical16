@@ -3,6 +3,7 @@ package com.musical16.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -25,6 +26,9 @@ public class ProductEntity extends BaseEntity{
 	
 	@Column(name = "price")
 	private Double price;
+	
+	@Column(name= "rate_point")
+	private Double rate_point;
 
 	@ManyToOne
 	@JoinColumn(name = "origin_id")
@@ -33,13 +37,13 @@ public class ProductEntity extends BaseEntity{
 	@Column(name = "quantity")
 	private Integer quantity;
 	
-	@OneToMany(mappedBy = "products")
+	@OneToMany(mappedBy = "products",cascade = CascadeType.ALL)
 	private List<ImageEntity> images = new ArrayList<>();
 	
 	@Column(name = "status")
 	private Integer status;
 	
-	@Column(name = "code", unique = true)
+	@Column(name = "code")
 	private String code;
 	
 	@ManyToOne
@@ -49,16 +53,16 @@ public class ProductEntity extends BaseEntity{
 	@Column(name = "wanrranty")
 	private Integer wanrranty;
 	
-	@OneToMany(mappedBy = "product")
+	@OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
 	private List<CartDetailEntity> cartDetail = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "productOrder")
+	@OneToMany(mappedBy = "productOrder",cascade = CascadeType.ALL)
 	private List<OrderDetailEntity> orderDetail = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "product")
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
 	private List<CommentEntity> comment = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "product")
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
 	private List<RateEntity> rate = new ArrayList<>();
 
 	public String getName() {
@@ -179,6 +183,14 @@ public class ProductEntity extends BaseEntity{
 
 	public void setRate(List<RateEntity> rate) {
 		this.rate = rate;
+	}
+
+	public Double getRate_point() {
+		return rate_point;
+	}
+
+	public void setRate_point(Double rate_point) {
+		this.rate_point = rate_point;
 	}
 	
 	

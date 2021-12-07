@@ -1,13 +1,10 @@
-package com.musical16.dto.product;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import com.musical16.dto.BaseDTO;
+package com.musical16.dto.request;
 
 
-public class ProductDTO extends BaseDTO{
+public class InputProduct {
 
+	private Long id;
+    
 	private String name;
 	
 	private String shortdescription;
@@ -20,17 +17,21 @@ public class ProductDTO extends BaseDTO{
 	
 	private Integer quantity;
 	
-	private List<ImageDTO> images = new ArrayList<>();
-	
-	private Integer status;
+	private String[] url;
 	
 	private String code;
 	
 	private Long categoryId;
 	
 	private Integer wanrranty;
-	
-	private Double rate;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getName() {
 		return name;
@@ -64,6 +65,13 @@ public class ProductDTO extends BaseDTO{
 		this.price = price;
 	}
 
+	public Long getOriginId() {
+		return originId;
+	}
+
+	public void setOriginId(Long originId) {
+		this.originId = originId;
+	}
 
 	public Integer getQuantity() {
 		return quantity;
@@ -73,20 +81,12 @@ public class ProductDTO extends BaseDTO{
 		this.quantity = quantity;
 	}
 
-	public List<ImageDTO> getImages() {
-		return images;
+	public String[] getUrl() {
+		return url;
 	}
 
-	public void setImages(List<ImageDTO> images) {
-		this.images = images;
-	}
-
-	public Integer getStatus() {
-		return status;
-	}
-
-	public void setStatus(Integer status) {
-		this.status = status;
+	public void setUrl(String[] url) {
+		this.url = url;
 	}
 
 	public String getCode() {
@@ -95,14 +95,6 @@ public class ProductDTO extends BaseDTO{
 
 	public void setCode(String code) {
 		this.code = code;
-	}
-
-	public Long getOriginId() {
-		return originId;
-	}
-
-	public void setOriginId(Long originId) {
-		this.originId = originId;
 	}
 
 	public Long getCategoryId() {
@@ -119,14 +111,6 @@ public class ProductDTO extends BaseDTO{
 
 	public void setWanrranty(Integer wanrranty) {
 		this.wanrranty = wanrranty;
-	}
-
-	public Double getRate() {
-		return rate;
-	}
-
-	public void setRate(Double rate) {
-		this.rate = rate;
 	}
 	
 	

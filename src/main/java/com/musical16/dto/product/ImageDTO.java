@@ -1,38 +1,25 @@
 package com.musical16.dto.product;
 
-import com.musical16.dto.BaseDTO;
 
-public class ImageDTO extends BaseDTO{
+public class ImageDTO {
 
-	private String name;
+	private Long id;
 	private String url;
-	private String product;
-	private String message;
-	public String getName() {
-		return name;
+	
+	
+	public Long getId() {
+		return id;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setId(Long id) {
+		this.id = id;
 	}
+
 	public String getUrl() {
 		return url;
 	}
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	
-	public String getProduct() {
-		return product;
-	}
-	public void setProduct(String product) {
-		this.product = product;
-	}
-	public String getMessage() {
-		return message;
-	}
-	public void setMessage(String message) {
-		this.message = message;
-	}
-	
+		
 	
 }

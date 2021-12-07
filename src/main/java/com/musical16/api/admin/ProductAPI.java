@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.musical16.dto.product.ProductDTO;
+import com.musical16.dto.request.InputProduct;
 import com.musical16.dto.response.MessageDTO;
 import com.musical16.dto.response.Page;
 import com.musical16.service.IProductService;
@@ -27,8 +28,8 @@ public class ProductAPI {
 	private IProductService productService;
 	
 	@GetMapping("/search/{key}")
-	public Page<ProductDTO> search(@PathVariable(value = "key",required = false) String key){
-		return productService.search(key);
+	public Page<ProductDTO> search(@PathVariable(value = "key",required = false) String key, @RequestParam(value = "page", required = false) Integer page){
+		return productService.search(key, page);
 	}
 
 	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
@@ -42,20 +43,20 @@ public class ProductAPI {
 		return productService.findAll(id,page,sort);
 	}
 	@GetMapping("/product/{id}")
-	public ResponseEntity<ProductDTO> findOne(@PathVariable("id")long id) {
+	public ResponseEntity<?> findOne(@PathVariable("id")long id) {
 		return productService.findOne(id);
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/product")
-	public MessageDTO save(@RequestBody ProductDTO productDTO, HttpServletRequest req) {
-		return productService.save(productDTO, req);
+	public ResponseEntity<?> save(@RequestBody InputProduct input, HttpServletRequest req) {
+		return productService.save(input, req);
 	}
 	
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/product/{id}")
-	public MessageDTO delete(@PathVariable("id") Long id) {
+	public ResponseEntity<?> delete(@PathVariable("id") Long id) {
 		return productService.delete(id);
 	}
 }

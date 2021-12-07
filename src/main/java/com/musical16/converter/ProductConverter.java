@@ -10,7 +10,9 @@ import com.musical16.Entity.ImageEntity;
 import com.musical16.Entity.ProductEntity;
 import com.musical16.dto.product.ImageDTO;
 import com.musical16.dto.product.ProductDTO;
+import com.musical16.dto.request.InputProduct;
 import com.musical16.repository.CategoryRepository;
+import com.musical16.repository.ImageRepository;
 import com.musical16.repository.OriginRepository;
 
 @Component
@@ -21,18 +23,42 @@ public class ProductConverter {
 	
 	@Autowired
 	private CategoryRepository categoryRepository;
+	
+	@Autowired
+	private ImageRepository imageRepository;
 
-	public ProductEntity toEntity(ProductDTO productDTO) {
+	public ProductEntity toEntity(InputProduct input) {
 		ProductEntity product = new ProductEntity();
-		product.setName(productDTO.getName());
-		product.setShortdescription(productDTO.getShortdescription());
-		product.setDetail(productDTO.getDetail());
-		product.setPrice(productDTO.getPrice());
-		product.setOrigins(originRepository.findOne(productDTO.getOriginId()));
-		product.setQuantity(productDTO.getQuantity());
-		product.setCode(productDTO.getCode());
-		product.setCategories(categoryRepository.findOne(productDTO.getCategoryId()));
-		product.setWanrranty(productDTO.getWanrranty());
+		product.setName(input.getName());
+		product.setShortdescription(input.getShortdescription());
+		product.setDetail(input.getDetail());
+		product.setPrice(input.getPrice());
+		product.setOrigins(originRepository.findOne(input.getOriginId()));
+		product.setQuantity(input.getQuantity());
+		product.setCode(input.getCode());
+		product.setCategories(categoryRepository.findOne(input.getCategoryId()));
+		product.setWanrranty(input.getWanrranty());
+		product.setRate_point(0.0);
+		if(product.getQuantity()>0) {
+			product.setStatus(1);
+		}else {
+			product.setStatus(0);
+		}
+		List<ImageEntity> listImage = new ArrayList<>();
+		try {
+			for(String each : input.getUrl()) {
+				ImageEntity item = new ImageEntity();
+				item.setUrl(each);
+				item.setProducts(product);
+				listImage.add(item);
+			}
+		} catch (NullPointerException e) {
+			ImageEntity item = new ImageEntity();
+			item.setUrl("");
+			item.setProducts(product);
+			listImage.add(item);
+		}
+		product.setImages(listImage);
 		return product;
 	}
 
@@ -46,18 +72,11 @@ public class ProductConverter {
 		product.setOriginId(productEntity.getOrigins().getId());
 		product.setQuantity(productEntity.getQuantity());
 		product.setStatus(productEntity.getStatus());
-		List<ImageEntity> imageEntity = productEntity.getImages();
 		List<ImageDTO> imageDTO = new ArrayList<>();
-		for(ImageEntity each : imageEntity) {
+		for(ImageEntity each : productEntity.getImages()) {
 			ImageDTO image = new ImageDTO();
 			image.setId(each.getId());
-			image.setName(each.getName());
 			image.setUrl(each.getUrl());
-			image.setCreatedBy(each.getCreatedBy());
-			image.setCreatedDate(each.getCreatedDate());
-			image.setModifiedBy(each.getModifiedBy());
-			image.setModifiedDate(each.getModifiedDate());
-			image.setProduct(productEntity.getName());
 			imageDTO.add(image);
 			
 		}
@@ -65,6 +84,7 @@ public class ProductConverter {
 		product.setCode(productEntity.getCode());
 		product.setCategoryId(productEntity.getCategories().getId());
 		product.setWanrranty(productEntity.getWanrranty());
+		product.setRate(productEntity.getRate_point());
 		product.setCreatedBy(productEntity.getCreatedBy());
 		product.setCreatedDate(productEntity.getCreatedDate());
 		product.setModifiedBy(productEntity.getModifiedBy());
@@ -72,16 +92,39 @@ public class ProductConverter {
 		return product;
 	}
 
-	public ProductEntity toEntity(ProductDTO productDTO, ProductEntity product) {
-		product.setName(productDTO.getName());
-		product.setShortdescription(productDTO.getShortdescription());
-		product.setDetail(productDTO.getDetail());
-		product.setPrice(productDTO.getPrice());
-		product.setOrigins(originRepository.findOne(productDTO.getOriginId()));
-		product.setQuantity(productDTO.getQuantity());
-		product.setCode(productDTO.getCode());
-		product.setCategories(categoryRepository.findOne(productDTO.getCategoryId()));
-		product.setWanrranty(productDTO.getWanrranty());
+	public ProductEntity toEntity(InputProduct input, ProductEntity product) {
+		product.setName(input.getName());
+		product.setShortdescription(input.getShortdescription());
+		product.setDetail(input.getDetail());
+		product.setPrice(input.getPrice());
+		product.setOrigins(originRepository.findOne(input.getOriginId()));
+		product.setQuantity(input.getQuantity());
+		product.setCode(input.getCode());
+		product.setCategories(categoryRepository.findOne(input.getCategoryId()));
+		product.setWanrranty(input.getWanrranty());
+		if(product.getQuantity()>0) {
+			product.setStatus(1);
+		}else {
+			product.setStatus(0);
+		}
+		for(ImageEntity each : imageRepository.findByProducts(product)) {
+			imageRepository.delete(each);
+		}
+		List<ImageEntity> listImage = new ArrayList<>();
+		try {
+			for(String each : input.getUrl()) {
+				ImageEntity item = new ImageEntity();
+				item.setUrl(each);
+				item.setProducts(product);
+				listImage.add(item);
+			}
+		} catch (NullPointerException e) {
+			ImageEntity item = new ImageEntity();
+			item.setUrl("");
+			item.setProducts(product);
+			listImage.add(item);
+		}
+		product.setImages(listImage);
 		return product;
 	}
 }

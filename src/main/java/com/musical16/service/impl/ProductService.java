@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,13 +22,14 @@ import com.musical16.Entity.ImageEntity;
 import com.musical16.Entity.ProductEntity;
 import com.musical16.converter.ProductConverter;
 import com.musical16.dto.product.ProductDTO;
+import com.musical16.dto.request.InputProduct;
 import com.musical16.dto.response.MessageDTO;
 import com.musical16.dto.response.Page;
+import com.musical16.dto.response.ResponseDTO;
 import com.musical16.repository.CategoryRepository;
 import com.musical16.repository.ImageRepository;
 import com.musical16.repository.OriginRepository;
 import com.musical16.repository.ProductRepository;
-import com.musical16.service.IFileStorageService;
 import com.musical16.service.IHelpService;
 import com.musical16.service.IProductService;
 
@@ -57,16 +57,26 @@ public class ProductService implements IProductService{
 	@Autowired
 	private ImageRepository imageRepository;
 	
-	@Autowired
-	private IFileStorageService fileStorageService;
-	
 	@Override
-	public Page<ProductDTO> search(String key) {
+	public Page<ProductDTO> search(String key, Integer page) {
 		Page<ProductDTO> result = new Page<>();
 		List<ProductDTO> list = new ArrayList<>();
-		for(ProductEntity each : productRepository.search(key)) {
+		Integer index ;
+		try {
+			if(page<=1) {
+				index = 1;
+			}else {
+				index = page;
+			}
+		} catch (NullPointerException e) {
+			index = 1;
+		}
+		Pageable pageable = new PageRequest(index-1, PAGE_LIMIT, Direction.ASC, "id");
+		for(ProductEntity each : productRepository.search(key, pageable)) {
 			list.add(productConverter.toDTO(each));
 		}
+		result.setPage(index);
+		result.setTotalPage((int)Math.ceil((double) productRepository.search(key).size()/PAGE_LIMIT));
 		result.setList(list);
 		return result;
 	}
@@ -85,19 +95,19 @@ public class ProductService implements IProductService{
 		} catch (NullPointerException e) {
 			index = 1;
 		}
-		for(String each : sort) {
-			if(each.equals("gia-thap-den-cao")) {
-				listorders.add(new Order(Direction.ASC, "price"));
-			}else if(each.equals("gia-cao-den-thap")) {
-				listorders.add(new Order(Direction.DESC, "price"));
-			}else if(each.equals("z-a")) {
-				listorders.add(new Order(Direction.DESC, "name"));
-			}else if(each.equals("a-z")) {
-				listorders.add(new Order(Direction.ASC, "name"));
+		try {
+			for(String each : sort) {
+				if(each.equals("gia-thap-den-cao")) {
+					listorders.add(new Order(Direction.ASC, "price"));
+				}else if(each.equals("gia-cao-den-thap")) {
+					listorders.add(new Order(Direction.DESC, "price"));
+				}else if(each.equals("z-a")) {
+					listorders.add(new Order(Direction.DESC, "name"));
+				}else if(each.equals("a-z")) {
+					listorders.add(new Order(Direction.ASC, "name"));
+				}
 			}
-		}
-		
-		if(listorders.size()==0) {
+		} catch (NullPointerException e) {
 			listorders.add(new Order(Direction.DESC, "id"));
 		}
 		
@@ -124,78 +134,76 @@ public class ProductService implements IProductService{
 	}
 
 	@Override
-	public MessageDTO save(ProductDTO productDTO, HttpServletRequest req) {
-		MessageDTO message = new MessageDTO();
+	public ResponseEntity<?> save(InputProduct input, HttpServletRequest req) {
+		ResponseDTO<ProductDTO> result = new ResponseDTO<>();
 		try {
 			ProductEntity product = new ProductEntity();
-			if(productDTO.getId()!=null) {
-				if(productRepository.findOne(productDTO.getId())!=null) {
-					if(categoryRepository.findOne(productDTO.getCategoryId())==null) {
-						message.setMessage("Mã danh mục không tồn tại");
-					}else if(originRepository.findOne(productDTO.getOriginId())==null){
-						message.setMessage("Mã xuất xứ không tồn tại");
+			if(input.getId()!=null) {
+				if(productRepository.findOne(input.getId())!=null) {
+					if(categoryRepository.findOne(input.getCategoryId())==null) {
+						result.setMessage("Mã danh mục không tồn tại");
+						return ResponseEntity.badRequest().body(result);
+					}else if(originRepository.findOne(input.getOriginId())==null){
+						result.setMessage("Mã xuất xứ không tồn tại");
+						return ResponseEntity.badRequest().body(result);
 					}else {
-						ProductEntity old = productRepository.findOne(productDTO.getId());
-						product = productConverter.toEntity(productDTO, old);
-						if(product.getQuantity()>0) {
-							product.setStatus(1);
-						}else {
-							product.setStatus(0);
-						}
+						ProductEntity old = productRepository.findOne(input.getId());
+						product = productConverter.toEntity(input, old);
 						product.setModifiedBy(helpService.getName(req));
 						product.setModifiedDate(new Timestamp(System.currentTimeMillis()));
 						productRepository.save(product);
-						message.setMessage("Đã cập nhật thành công sản phẩm "+product.getName());
+						productRepository.save(product);
+						result.setMessage("Đã cập nhật thành công sản phẩm "+product.getName());
+						ProductDTO productRep = productConverter.toDTO(product);
+						result.setObject(productRep);
+						return ResponseEntity.ok(result);
 					}
 				}else {
-					message.setMessage("Mã sản phẩm không tồn tại");
+					result.setMessage("Mã sản phẩm không tồn tại");
+					return ResponseEntity.badRequest().body(result);
 				}
 			}else {
-				if(categoryRepository.findOne(productDTO.getCategoryId())==null) {
-					message.setMessage("Mã danh mục không tồn tại");
-				}else if(originRepository.findOne(productDTO.getOriginId())==null){
-					message.setMessage("Mã xuất xứ không tồn tại");
+				if(categoryRepository.findOne(input.getCategoryId())==null) {
+					result.setMessage("Mã danh mục không tồn tại");
+					return ResponseEntity.badRequest().body(result);
+				}else if(originRepository.findOne(input.getOriginId())==null){
+					result.setMessage("Mã xuất xứ không tồn tại");
+					return ResponseEntity.badRequest().body(result);
 				}else {
-					product = productConverter.toEntity(productDTO);
-					if(product.getQuantity()>0) {
-						product.setStatus(1);
-					}else {
-						product.setStatus(0);
-					}
+					product = productConverter.toEntity(input);
 					product.setCreatedBy(helpService.getName(req));
 					product.setCreatedDate(new Timestamp(System.currentTimeMillis()));
 					productRepository.save(product);
-					message.setMessage("Đã thêm thành công sản phẩm "+product.getName());
+					result.setMessage("Đã thêm thành công sản phẩm "+product.getName());
+					ProductDTO productRep = productConverter.toDTO(product);
+					result.setObject(productRep);
+					return ResponseEntity.ok(result);
 				}
 			}
-		} catch (DataIntegrityViolationException e) {
-			message.setMessage("Code sản phẩm đã tồn tại, vui lòng tạo code khác");
-		} catch (InvalidDataAccessApiUsageException e2) {
-			message.setMessage("Bạn đã nhập thiếu cột hoặc sai key");
+		}  catch (InvalidDataAccessApiUsageException e2) {
+			result.setMessage("Đã có lỗi xảy ra !");
+			return ResponseEntity.badRequest().body(result);
 		}
-		return message;
 	}
 
 	@Override
-	public MessageDTO delete(Long id) {
-		MessageDTO message = new MessageDTO();
+	public ResponseEntity<?> delete(Long id) {
+		ResponseDTO<ProductDTO> result = new ResponseDTO<>();
 		if(productRepository.findOne(id)!=null) {
 			ProductEntity e = productRepository.findOne(id);
-			List<ImageEntity> images = imageRepository.findByProducts(e);
-			for(ImageEntity each : images) {
-				imageRepository.delete(each);
-				fileStorageService.deleteFile(each.getName());
-			}
 			productRepository.delete(e);
-			message.setMessage("Đã xóa sản phẩm "+e.getName());
+			ProductDTO productDTO = productConverter.toDTO(e);
+			result.setMessage("Đã xóa sản phẩm "+e.getName());
+			result.setObject(productDTO);
+			return ResponseEntity.ok(result);
 		}else {
-			message.setMessage("Không tìm thấy mã sản phẩm");
+			result.setMessage("Không tìm thấy hoặc mã sản phẩm không hợp lệ !");
+			return ResponseEntity.badRequest().body(result);
 		}
-		return message;
 	}
 
 	@Override
-	public ResponseEntity<ProductDTO> findOne(long id) {
+	public ResponseEntity<?> findOne(long id) {
 		ProductDTO product = new ProductDTO();
 		ProductEntity e = new ProductEntity();
 		if(productRepository.findOne(id)!=null) {
