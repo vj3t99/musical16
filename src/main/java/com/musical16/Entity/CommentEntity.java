@@ -15,15 +15,15 @@ import javax.persistence.Table;
 @Table(name = "comment")
 public class CommentEntity extends BaseEntity{
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "product_id")
 	private ProductEntity product;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private UserEntity user;
 	
-	@OneToMany(mappedBy = "comment")
+	@OneToMany(mappedBy = "comment",cascade = CascadeType.ALL)
 	private List<CommentReplyEntity> commentReply = new ArrayList<>();
 	
 	@Column(name = "message", columnDefinition = "VARCHAR(100) NOT NULL")

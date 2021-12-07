@@ -1,6 +1,5 @@
 package com.musical16.api.admin;
 
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.musical16.dto.news.NewDTO;
 import com.musical16.dto.response.MessageDTO;
+import com.musical16.dto.response.Page;
 import com.musical16.service.INewService;
 
 @RestController
@@ -27,8 +27,9 @@ public class NewAPI {
 	private INewService newService;
 	
 	@GetMapping("/new")
-	public List<NewDTO> findAll(){
-		return newService.findAll();
+	public Page<NewDTO> findAll(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value= "sort", required = false ) String[] sort, 
+			@RequestParam(value = "category", required = false) Long id){
+		return newService.findAll(page, sort, id);
 	}
 	
 	@GetMapping("/new/{id}")

@@ -1,6 +1,5 @@
 package com.musical16.Entity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -11,11 +10,11 @@ import javax.persistence.Table;
 @Table(name = "comment_reply")
 public class CommentReplyEntity extends BaseEntity{
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "comment_id")
 	private CommentEntity comment;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private UserEntity user;
 	
@@ -23,7 +22,7 @@ public class CommentReplyEntity extends BaseEntity{
 	private String message;
 	
 	@Column(name = "status")
-	private String status;
+	private Integer status;
 
 	public CommentEntity getComment() {
 		return comment;
@@ -49,16 +48,12 @@ public class CommentReplyEntity extends BaseEntity{
 		this.message = message;
 	}
 
-	public String getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
-	
-	
-	
-	
 	
 }

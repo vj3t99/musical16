@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.musical16.Entity.CategoryEntity;
@@ -75,57 +76,49 @@ public class ProductService implements IProductService{
 		Page<ProductDTO> result = new Page<>();
 		Integer index = null;
 		List<Order> listorders = new ArrayList<>();
-		
 		try {
-			try {
-				if(page<=0||page==null) {
-					index = 1;
-				}else {
-					index=page;
-				}
-			} catch (NullPointerException e) {
+			if(page<=0||page==null) {
 				index = 1;
-			}
-			for(String each : sort) {
-				if(each.equals("gia-thap-den-cao")) {
-					listorders.add(new Order(Direction.ASC, "price"));
-				}else if(each.equals("gia-cao-den-thap")) {
-					listorders.add(new Order(Direction.DESC, "price"));
-				}else if(each.equals("z-a")) {
-					listorders.add(new Order(Direction.DESC, "name"));
-				}else if(each.equals("a-z")) {
-					listorders.add(new Order(Direction.ASC, "name"));
-				}
+			}else {
+				index=page;
 			}
 		} catch (NullPointerException e) {
-			
-		}finally {
-			
-			
-			Pageable pageable;
-			if(listorders.size()!=0) {
-				Sort sorts = new Sort(listorders);
-				pageable = new PageRequest(index -1, PAGE_LIMIT,sorts);
-			}else {
-				pageable = new PageRequest(index -1, PAGE_LIMIT);
-			}
-			org.springframework.data.domain.Page<ProductEntity> listEntity = null;
-			List<ProductDTO> list = new ArrayList<>();
-			if(id!=null) {
-				CategoryEntity category = categoryRepository.findOne(id);
-				listEntity = productRepository.findByCategories(category, pageable);
-				result.setTotalPage((int) Math.ceil((double) productRepository.findByCategories(category).size()/PAGE_LIMIT));
-			}else {
-				listEntity = productRepository.findAll(pageable);
-				result.setTotalPage((int) Math.ceil((double) productRepository.count()/PAGE_LIMIT));
-			}
-			for(ProductEntity each : listEntity) {
-				list.add(productConverter.toDTO(each));
-			}
-			result.setPage(index);
-			result.setList(list);
-			
+			index = 1;
 		}
+		for(String each : sort) {
+			if(each.equals("gia-thap-den-cao")) {
+				listorders.add(new Order(Direction.ASC, "price"));
+			}else if(each.equals("gia-cao-den-thap")) {
+				listorders.add(new Order(Direction.DESC, "price"));
+			}else if(each.equals("z-a")) {
+				listorders.add(new Order(Direction.DESC, "name"));
+			}else if(each.equals("a-z")) {
+				listorders.add(new Order(Direction.ASC, "name"));
+			}
+		}
+		
+		if(listorders.size()==0) {
+			listorders.add(new Order(Direction.DESC, "id"));
+		}
+		
+		Sort sorts = new Sort(listorders);
+		Pageable pageable = new PageRequest(index -1, PAGE_LIMIT, sorts);
+		org.springframework.data.domain.Page<ProductEntity> listEntity = null;
+		List<ProductDTO> list = new ArrayList<>();
+		
+		if(id!=null) {
+			CategoryEntity category = categoryRepository.findOne(id);
+			listEntity = productRepository.findByCategories(category, pageable);
+			result.setTotalPage((int) Math.ceil((double) productRepository.findByCategories(category).size()/PAGE_LIMIT));
+		}else {
+			listEntity = productRepository.findAll(pageable);
+			result.setTotalPage((int) Math.ceil((double) productRepository.count()/PAGE_LIMIT));
+		}
+		for(ProductEntity each : listEntity) {
+			list.add(productConverter.toDTO(each));
+		}
+		result.setPage(index);
+		result.setList(list);
 		
 		return result;
 	}
@@ -202,15 +195,24 @@ public class ProductService implements IProductService{
 	}
 
 	@Override
-	public ProductDTO findOne(long id) {
+	public ResponseEntity<ProductDTO> findOne(long id) {
 		ProductDTO product = new ProductDTO();
 		ProductEntity e = new ProductEntity();
 		if(productRepository.findOne(id)!=null) {
 			e = productRepository.findOne(id);
 			product = productConverter.toDTO(e);
+			return ResponseEntity.ok(product);
 		}else {
-			product.setMessage("Không tìm thấy mã sản phẩm");
+			return ResponseEntity.badRequest().body(product);
 		}
-		return product;
+	}
+
+	@Override
+	public ResponseEntity<?> showAll() {
+		List<ProductDTO> list = new ArrayList<>();
+		for(ProductEntity each : productRepository.findAll()) {
+			list.add(productConverter.toDTO(each));
+		}
+		return ResponseEntity.ok(list);
 	}
 }

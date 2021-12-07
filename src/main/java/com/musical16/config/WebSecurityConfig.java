@@ -1,7 +1,5 @@
 package com.musical16.config;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +68,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
                 .antMatchers("/","/authenticate", "/register","/activation",
                 		"/forgotpassword","/downloadFile/{fileName:.+}",
                 		"/category","/origin","/product","/product/*","/categoryNew",
-                		"/new","/new/{id}","/resetpassword","/roles","/search/*").permitAll()
+                		"/new","/new/{id}","/resetpassword","/roles","/search/*","/comment/{id}").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint).and()

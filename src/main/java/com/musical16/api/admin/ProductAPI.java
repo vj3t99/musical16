@@ -5,6 +5,7 @@ package com.musical16.api.admin;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,17 +31,20 @@ public class ProductAPI {
 		return productService.search(key);
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
+	@GetMapping("/admin/product")
+	public ResponseEntity<?> showAll(){
+		return productService.showAll();
+	}
+	
 	@GetMapping("/product")
 	public Page<ProductDTO> findAll(@RequestParam(value = "category", required = false) Long id, @RequestParam(value ="page", required = false) Integer page, @RequestParam(value = "sort", required = false) String[] sort) {
 		return productService.findAll(id,page,sort);
 	}
 	@GetMapping("/product/{id}")
-	public ProductDTO findOne(@PathVariable("id")long id) {
+	public ResponseEntity<ProductDTO> findOne(@PathVariable("id")long id) {
 		return productService.findOne(id);
 	}
-
-	
-	
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/product")
