@@ -3,6 +3,7 @@ package com.musical16.api.admin;
 
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.musical16.dto.product.ProductDTO;
 import com.musical16.dto.request.InputProduct;
-import com.musical16.dto.response.MessageDTO;
 import com.musical16.dto.response.Page;
 import com.musical16.service.IProductService;
 
@@ -49,7 +49,7 @@ public class ProductAPI {
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/product")
-	public ResponseEntity<?> save(@RequestBody InputProduct input, HttpServletRequest req) {
+	public ResponseEntity<?> save(@Valid @RequestBody InputProduct input, HttpServletRequest req) {
 		return productService.save(input, req);
 	}
 	

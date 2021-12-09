@@ -23,7 +23,7 @@ public class RateReplyEntity extends BaseEntity{
 	private String message;
 	
 	@Column(name = "status")
-	private String status;
+	private Integer status;
 
 	public RateEntity getRate() {
 		return rate;
@@ -49,13 +49,12 @@ public class RateReplyEntity extends BaseEntity{
 		this.message = message;
 	}
 
-	public String getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
-	
 	
 }

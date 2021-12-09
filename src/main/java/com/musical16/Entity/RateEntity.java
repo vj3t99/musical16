@@ -27,7 +27,7 @@ public class RateEntity extends BaseEntity{
 	private List<RateReplyEntity> rateReply = new ArrayList<>();
 	
 	@Column(name = "point")
-	private Float point;
+	private Integer point;
 	
 	@Column(name = "message", columnDefinition = "VARCHAR(100) NOT NULL")
 	private String message;
@@ -62,11 +62,11 @@ public class RateEntity extends BaseEntity{
 		this.rateReply = rateReply;
 	}
 
-	public Float getPoint() {
+	public Integer getPoint() {
 		return point;
 	}
 
-	public void setPoint(Float point) {
+	public void setPoint(Integer point) {
 		this.point = point;
 	}
 

@@ -1,29 +1,48 @@
 package com.musical16.dto.request;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 public class InputProduct {
 
 	private Long id;
     
+	@NotEmpty(message = "Tên sản phẩm không được rỗng !")
 	private String name;
 	
+	@NotEmpty(message = "Mô tả ngắn không được rỗng !")
 	private String shortdescription;
 	
+	@NotEmpty(message = "Chi tiết sản phẩm không được rỗng !")
 	private String detail;
 	
+	@NotNull(message = "Giá không được rỗng")
+	@Min(value = 0, message = "Giá không hợp lệ")
 	private Double price;
 
+	@NotNull(message = "Số lượng không được rỗng")
+	@Min(value = 0, message = "Mã xuất xứ không hợp lệ")
 	private Long originId;
 	
+	@NotNull(message = "Số lượng không được rỗng")
+	@Min(value = 0, message = "Số lượng không hợp lệ")
 	private Integer quantity;
 	
 	private String[] url;
 	
+	@NotEmpty(message = "Code sản phẩm không được rỗng !")
 	private String code;
 	
+	@NotNull(message = "Mã thể loại không được rỗng")
+	@Min(value = 0, message = "Mã thể loại không hợp lệ")
 	private Long categoryId;
 	
-	private Integer wanrranty;
+	@NotNull(message = "Bảo hành không được rỗng")
+	@Min(value = 0, message = "Bảo hành không hợp lệ")
+	private Integer warranty;
 
 	public Long getId() {
 		return id;
@@ -105,12 +124,12 @@ public class InputProduct {
 		this.categoryId = categoryId;
 	}
 
-	public Integer getWanrranty() {
-		return wanrranty;
+	public Integer getWarranty() {
+		return warranty;
 	}
 
-	public void setWanrranty(Integer wanrranty) {
-		this.wanrranty = wanrranty;
+	public void setWarranty(Integer warranty) {
+		this.warranty = warranty;
 	}
 	
 	

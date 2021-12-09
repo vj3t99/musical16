@@ -18,16 +18,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.musical16.Entity.CategoryEntity;
-import com.musical16.Entity.ImageEntity;
 import com.musical16.Entity.ProductEntity;
 import com.musical16.converter.ProductConverter;
 import com.musical16.dto.product.ProductDTO;
 import com.musical16.dto.request.InputProduct;
-import com.musical16.dto.response.MessageDTO;
 import com.musical16.dto.response.Page;
 import com.musical16.dto.response.ResponseDTO;
 import com.musical16.repository.CategoryRepository;
-import com.musical16.repository.ImageRepository;
 import com.musical16.repository.OriginRepository;
 import com.musical16.repository.ProductRepository;
 import com.musical16.service.IHelpService;
@@ -53,9 +50,6 @@ public class ProductService implements IProductService{
 	
 	@Autowired
 	private ProductRepository productRepository;
-	
-	@Autowired
-	private ImageRepository imageRepository;
 	
 	@Override
 	public Page<ProductDTO> search(String key, Integer page) {

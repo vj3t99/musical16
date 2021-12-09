@@ -14,6 +14,7 @@ import com.musical16.Entity.CartEntity;
 import com.musical16.Entity.OrderDetailEntity;
 import com.musical16.Entity.OrdersEntity;
 import com.musical16.Entity.ProductEntity;
+import com.musical16.Entity.RateEntity;
 import com.musical16.Entity.UserEntity;
 import com.musical16.converter.OrderConverter;
 import com.musical16.dto.order.OrderDTO;
@@ -23,6 +24,7 @@ import com.musical16.dto.response.MessageDTO;
 import com.musical16.repository.CartRepository;
 import com.musical16.repository.OrdersRepository;
 import com.musical16.repository.ProductRepository;
+import com.musical16.repository.RateRepository;
 import com.musical16.repository.UserRepository;
 import com.musical16.service.IHelpService;
 import com.musical16.service.IOrdersService;
@@ -47,6 +49,9 @@ public class OrdersService implements IOrdersService {
 
 	@Autowired
 	private OrderConverter orderConverter;
+	
+	@Autowired
+	private RateRepository rateRepository;
 
 	@Override
 	public List<OrderDTO> findAll(HttpServletRequest req) {
@@ -166,6 +171,15 @@ public class OrdersService implements IOrdersService {
 					orderEntity.setStatus(2);
 					ordersRepository.save(orderEntity);
 					message.setMessage("Đơn hàng đã xác nhận thanh toán");
+					for(OrderDetailEntity each : orderEntity.getOrderDetail()) {
+						RateEntity rate = new RateEntity();
+						rate.setProduct(each.getProduct());
+						rate.setUser(orderEntity.getUser());
+						rate.setFlag(false);
+						rate.setStatus(0);
+						rate.setMessage("");
+						rateRepository.save(rate);
+					}
 				}else if(order.getStatus().equals(-1)){
 					returnProduct(orderEntity);
 					orderEntity.setStatus(-1);

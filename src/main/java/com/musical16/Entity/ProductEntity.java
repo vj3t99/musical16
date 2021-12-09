@@ -21,7 +21,7 @@ public class ProductEntity extends BaseEntity{
 	@Column(name = "shortdescription")
 	private String shortdescription;
 	
-	@Column(name = "detail")
+	@Column(name = "detail", columnDefinition = "TEXT" )
 	private String detail;
 	
 	@Column(name = "price")
@@ -50,8 +50,8 @@ public class ProductEntity extends BaseEntity{
 	@JoinColumn(name = "categoryp_id")
 	private CategoryEntity categories;
 	
-	@Column(name = "wanrranty")
-	private Integer wanrranty;
+	@Column(name = "warranty")
+	private Integer warranty;
 	
 	@OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
 	private List<CartDetailEntity> cartDetail = new ArrayList<>();
@@ -129,12 +129,12 @@ public class ProductEntity extends BaseEntity{
 		this.code = code;
 	}
 
-	public Integer getWanrranty() {
-		return wanrranty;
+	public Integer getWarranty() {
+		return warranty;
 	}
 
-	public void setWanrranty(Integer wanrranty) {
-		this.wanrranty = wanrranty;
+	public void setWarranty(Integer warranty) {
+		this.warranty = warranty;
 	}
 
 	public List<ImageEntity> getImages() {

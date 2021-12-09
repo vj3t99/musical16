@@ -37,7 +37,7 @@ public class ProductConverter {
 		product.setQuantity(input.getQuantity());
 		product.setCode(input.getCode());
 		product.setCategories(categoryRepository.findOne(input.getCategoryId()));
-		product.setWanrranty(input.getWanrranty());
+		product.setWarranty(input.getWarranty());
 		product.setRate_point(0.0);
 		if(product.getQuantity()>0) {
 			product.setStatus(1);
@@ -83,7 +83,7 @@ public class ProductConverter {
 		product.setImages(imageDTO);
 		product.setCode(productEntity.getCode());
 		product.setCategoryId(productEntity.getCategories().getId());
-		product.setWanrranty(productEntity.getWanrranty());
+		product.setWanrranty(productEntity.getWarranty());
 		product.setRate(productEntity.getRate_point());
 		product.setCreatedBy(productEntity.getCreatedBy());
 		product.setCreatedDate(productEntity.getCreatedDate());
@@ -101,7 +101,7 @@ public class ProductConverter {
 		product.setQuantity(input.getQuantity());
 		product.setCode(input.getCode());
 		product.setCategories(categoryRepository.findOne(input.getCategoryId()));
-		product.setWanrranty(input.getWanrranty());
+		product.setWarranty(input.getWarranty());
 		if(product.getQuantity()>0) {
 			product.setStatus(1);
 		}else {
