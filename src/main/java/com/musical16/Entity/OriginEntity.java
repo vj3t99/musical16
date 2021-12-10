@@ -11,7 +11,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "origin")
 public class OriginEntity extends BaseEntity{
-	@Column(name = "name")
+	@Column(name = "name", unique = true)
 	private String name;
 	@Column(name = "code")
 	private String code;

@@ -7,12 +7,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.musical16.Entity.OriginEntity;
 import com.musical16.converter.OriginConverter;
 import com.musical16.dto.product.OriginDTO;
-import com.musical16.dto.response.MessageDTO;
+import com.musical16.dto.response.ResponseDTO;
 import com.musical16.repository.OriginRepository;
 import com.musical16.service.IOriginService;
 
@@ -40,41 +42,52 @@ public class OriginService implements IOriginService{
 	}
 
 	@Override
-	public MessageDTO save(OriginDTO originDTO, HttpServletRequest req) {
-		MessageDTO message = new MessageDTO();
-		OriginEntity origin = new OriginEntity();
-		if(originDTO.getId()!=null) {
-			if(originRepository.findOne(originDTO.getId())!=null) {
-				OriginEntity old = originRepository.findOne(originDTO.getId());
-				origin = originConverter.toEntity(originDTO, old);
-				origin.setModifiedBy(helpService.getName(req));
-				origin.setModifiedDate(new Timestamp(System.currentTimeMillis()));
-				originRepository.save(origin);
-				message.setMessage("Đã cập nhật thành công xuất xứ "+origin.getName());
+	public ResponseEntity<?> save(OriginDTO originDTO, HttpServletRequest req) {
+		ResponseDTO<OriginDTO> result = new ResponseDTO<>();
+		try {
+			OriginEntity origin = new OriginEntity();
+			if(originDTO.getId()!=null) {
+				if(originRepository.findOne(originDTO.getId())!=null) {
+					OriginEntity old = originRepository.findOne(originDTO.getId());
+					origin = originConverter.toEntity(originDTO, old);
+					origin.setModifiedBy(helpService.getName(req));
+					origin.setModifiedDate(new Timestamp(System.currentTimeMillis()));
+					originRepository.save(origin);
+					result.setMessage("Đã cập nhật thành công xuất xứ "+origin.getName());
+					result.setObject(originConverter.toDTO(origin));
+					return ResponseEntity.ok(result);
+				}else {
+					result.setMessage("Không tìm thấy mã xuất xứ ");
+					return ResponseEntity.badRequest().body(result);
+				}
 			}else {
-				message.setMessage("Không tìm thấy mã xuất xứ ");
+				origin = originConverter.toEntity(originDTO);
+				origin.setCreatedBy(helpService.getName(req));
+				origin.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+				originRepository.save(origin);
+				result.setMessage("Đã thêm thành công xuất xứ "+origin.getName());
+				result.setObject(originConverter.toDTO(origin));
+				return ResponseEntity.ok(result);
 			}
-		}else {
-			origin = originConverter.toEntity(originDTO);
-			origin.setCreatedBy(helpService.getName(req));
-			origin.setCreatedDate(new Timestamp(System.currentTimeMillis()));
-			originRepository.save(origin);
-			message.setMessage("Đã thêm thành công xuất xứ "+origin.getName());
+		} catch (DataIntegrityViolationException e) {
+			result.setMessage("Tên xuất xứ đã tồn tại ");
+			return ResponseEntity.badRequest().body(result);
 		}
-		return message;
 	}
 
 	@Override
-	public MessageDTO delete(long id) {
-		MessageDTO message = new MessageDTO();
+	public ResponseEntity<?> delete(long id) {
+		ResponseDTO<OriginDTO> result = new ResponseDTO<>();
 		if(id!=0&&originRepository.findOne(id)!=null) {
 			OriginEntity origin = originRepository.findOne(id);
 			originRepository.delete(origin);
-			message.setMessage("Đã xóa thành công xuất xứ "+origin.getName());
+			result.setMessage("Đã xóa thành công xuất xứ "+origin.getName());
+			result.setObject(originConverter.toDTO(origin));
+			return ResponseEntity.ok(result);
 		}else {
-			message.setMessage("Không tìm thấy mã xuất xứ");
+			result.setMessage("Không tìm thấy mã xuất xứ");
+			return ResponseEntity.badRequest().body(result);
 		}
-		return message;
 	}
 
 }

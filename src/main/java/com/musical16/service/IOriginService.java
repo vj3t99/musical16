@@ -4,14 +4,15 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.http.ResponseEntity;
+
 import com.musical16.dto.product.OriginDTO;
-import com.musical16.dto.response.MessageDTO;
 
 public interface IOriginService {
 
 	public List<OriginDTO> findAll();
 
-	public MessageDTO save(OriginDTO originDTO, HttpServletRequest req);
+	public ResponseEntity<?> save(OriginDTO originDTO, HttpServletRequest req);
 
-	public MessageDTO delete(long id);
+	public ResponseEntity<?> delete(long id);
 }

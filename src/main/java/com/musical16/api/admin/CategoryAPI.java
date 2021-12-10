@@ -3,8 +3,10 @@ package com.musical16.api.admin;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.musical16.dto.product.CategoryDTO;
-import com.musical16.dto.response.MessageDTO;
 import com.musical16.service.ICategoryService;
 
 @RestController
@@ -30,14 +31,12 @@ public class CategoryAPI {
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping(value = "/category")
-	public MessageDTO save(@RequestBody CategoryDTO categoryDTO, HttpServletRequest req) {
+	public ResponseEntity<?> save(@Valid @RequestBody CategoryDTO categoryDTO, HttpServletRequest req) {
 		return categoryService.save(categoryDTO,req);
-		
 	}
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping(value = "/category/{id}")
-	public MessageDTO delete(@PathVariable("id") long id) {
+	public ResponseEntity<?> delete(@PathVariable("id") long id) {
 		 return categoryService.delete(id);
-		
 	}
 }

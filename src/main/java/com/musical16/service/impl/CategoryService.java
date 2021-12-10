@@ -7,12 +7,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.musical16.Entity.CategoryEntity;
 import com.musical16.converter.CategoryConverter;
 import com.musical16.dto.product.CategoryDTO;
-import com.musical16.dto.response.MessageDTO;
+import com.musical16.dto.response.ResponseDTO;
 import com.musical16.repository.CategoryRepository;
 import com.musical16.service.ICategoryService;
 import com.musical16.service.IHelpService;
@@ -41,8 +43,8 @@ public class CategoryService implements ICategoryService{
 	}
 
 	@Override
-	public MessageDTO save(CategoryDTO categoryDTO, HttpServletRequest req) {
-		MessageDTO message = new MessageDTO();
+	public ResponseEntity<?> save(CategoryDTO categoryDTO, HttpServletRequest req) {
+		ResponseDTO<CategoryDTO> result = new ResponseDTO<>();
 		try {
 			CategoryEntity category = new CategoryEntity();
 			if(categoryDTO.getId()!=null) {
@@ -51,31 +53,40 @@ public class CategoryService implements ICategoryService{
 				category.setModifiedBy(helpService.getName(req));
 				category.setModifiedDate(new Timestamp(System.currentTimeMillis()));
 				categoryRepository.save(category);
-				message.setMessage("Cập nhật thành công danh mục "+category.getName());
+				result.setMessage("Cập nhật thành công danh mục "+category.getName());
+				result.setObject(categoryConverter.toDTO(category));
+				return ResponseEntity.ok(result);
 			}else {
 				category = categoryConverter.toEntity(categoryDTO);
 				category.setCreatedBy(helpService.getName(req));
 				category.setCreatedDate(new Timestamp(System.currentTimeMillis()));
 				categoryRepository.save(category);
-				message.setMessage("Thêm thành công danh mục "+category.getName());
+				result.setMessage("Thêm thành công danh mục "+category.getName());
+				result.setObject(categoryConverter.toDTO(category));
+				return ResponseEntity.ok(result);
 			}
 		} catch (NullPointerException e) {
-			message.setMessage("Không tìm thấy mã danh mục");
+			result.setMessage("Không tìm thấy mã danh mục !");
+			return ResponseEntity.badRequest().body(result);
+		} catch (DataIntegrityViolationException e2) {
+			result.setMessage("Tên danh mục đã tồn tại !");
+			return ResponseEntity.badRequest().body(result);
 		}
-		return message;
 	}
 
 	@Override
-	public MessageDTO delete(long id) {
-		MessageDTO message = new MessageDTO();
+	public ResponseEntity<?> delete(long id) {
+		ResponseDTO<CategoryDTO> result = new ResponseDTO<>();
 		if(id!=0&&categoryRepository.findOne(id)!=null) {
 			CategoryEntity category = categoryRepository.findOne(id);
 			categoryRepository.delete(category);
-			message.setMessage("Đã xóa thành công danh mục "+category.getName());
+			result.setMessage("Đã xóa thành công danh mục "+category.getName());
+			result.setObject(categoryConverter.toDTO(category));
+			return ResponseEntity.ok(result);
 		}else {
-			message.setMessage("Không tìm thấy mã danh mục");
+			result.setMessage("Không tìm thấy mã danh mục");
+			return ResponseEntity.badRequest().body(result);
 		}
-		return message;
 	}
 
 }
