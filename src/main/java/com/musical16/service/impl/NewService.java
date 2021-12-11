@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +23,7 @@ import com.musical16.converter.NewConverter;
 import com.musical16.dto.news.NewDTO;
 import com.musical16.dto.response.MessageDTO;
 import com.musical16.dto.response.Page;
+import com.musical16.dto.response.ResponseDTO;
 import com.musical16.repository.CategoryNewRepository;
 import com.musical16.repository.NewRepository;
 import com.musical16.service.IFileStorageService;
@@ -99,8 +101,8 @@ public class NewService implements INewService{
 	}
 
 	@Override
-	public MessageDTO save(NewDTO newDTO, HttpServletRequest req) {
-		MessageDTO message = new MessageDTO();
+	public ResponseEntity<?> save(NewDTO newDTO, HttpServletRequest req) {
+		ResponseDTO<NewDTO> result = new ResponseDTO<>();
 		NewEntity news = new NewEntity();
 		if(newDTO.getId()!=null) {
 			if(categoryNewRepository.findOne(newDTO.getCategoryNews())!=null) {
@@ -110,9 +112,12 @@ public class NewService implements INewService{
 				nNew.setModifiedBy(helpService.getName(req));
 				nNew.setModifiedDate(new Timestamp(System.currentTimeMillis()));
 				newRepository.save(nNew);
-				message.setMessage("Cập nhật thành công bài viết " + nNew.getName());
+				result.setMessage("Cập nhật thành công bài viết " + nNew.getName());
+				result.setObject(newConverter.toDTO(nNew));
+				return ResponseEntity.ok(result);
 			}else {
-				message.setMessage("không tìm thấy mã thể loại bài viết : "+newDTO.getCategoryNews());
+				result.setMessage("không tìm thấy mã thể loại bài viết : "+newDTO.getCategoryNews());
+				return ResponseEntity.badRequest().body(result);
 			}
 		}else {
 			if(categoryNewRepository.findOne(newDTO.getCategoryNews())!=null) {
@@ -125,25 +130,29 @@ public class NewService implements INewService{
 				news.setCreatedBy(helpService.getName(req));
 				news.setCreatedDate(new Timestamp(System.currentTimeMillis()));
 				newRepository.save(news);
-				message.setMessage("Thêm bài viết "+ news.getName() + " thành công");
+				result.setMessage("Thêm bài viết "+ news.getName() + " thành công");
+				result.setObject(newConverter.toDTO(news));
+				return ResponseEntity.ok(result);
 			}else {
-				message.setMessage("không tìm thấy mã thể loại bài viết : "+newDTO.getCategoryNews());
+				result.setMessage("không tìm thấy mã thể loại bài viết : "+newDTO.getCategoryNews());
+				return ResponseEntity.badRequest().body(result);
 			}
 		}
-		return message;
 	}
 
 	@Override
-	public MessageDTO delete(Long id) {
-		MessageDTO message  = new MessageDTO();
+	public ResponseEntity<?> delete(Long id) {
+		ResponseDTO<NewDTO> result = new ResponseDTO<>();
 		if(newRepository.findOne(id)!=null) {
 			NewEntity news = newRepository.findOne(id);
 			newRepository.delete(news);
-			message.setMessage("Đã xóa thành công bài viết " + news.getName());
+			result.setMessage("Đã xóa thành công bài viết " + news.getName());
+			result.setObject(newConverter.toDTO(news));
+			return ResponseEntity.ok(result);
 		}else {
-			message.setMessage("không tìm thấy mã bài viết : " + id);
+			result.setMessage("không tìm thấy mã bài viết : " + id);
+			return ResponseEntity.badRequest().body(result);
 		}
-		return message;
 	}
 
 	@Override

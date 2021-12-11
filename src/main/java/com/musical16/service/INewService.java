@@ -3,6 +3,7 @@ package com.musical16.service;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.musical16.dto.news.NewDTO;
@@ -13,9 +14,9 @@ public interface INewService {
 
 	Page<NewDTO> findAll(Integer page, String[] sort, Long id);
 
-	MessageDTO save(NewDTO newDTO, HttpServletRequest req);
+	ResponseEntity<?> save(NewDTO newDTO, HttpServletRequest req);
 
-	MessageDTO delete(Long id);
+	ResponseEntity<?> delete(Long id);
 
 	NewDTO findOne(Long id);
 

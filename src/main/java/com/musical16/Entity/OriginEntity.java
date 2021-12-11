@@ -3,6 +3,7 @@ package com.musical16.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -16,7 +17,7 @@ public class OriginEntity extends BaseEntity{
 	@Column(name = "code")
 	private String code;
 	
-	@OneToMany(mappedBy = "origins")
+	@OneToMany(mappedBy = "origins", cascade = CascadeType.ALL)
 	private List<ProductEntity> products = new ArrayList<>();
 	public String getName() {
 		return name;

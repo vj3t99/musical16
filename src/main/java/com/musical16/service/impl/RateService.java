@@ -7,17 +7,25 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.musical16.Entity.ProductEntity;
 import com.musical16.Entity.RateEntity;
+import com.musical16.Entity.RateReplyEntity;
 import com.musical16.Entity.UserEntity;
 import com.musical16.converter.RateConverter;
+import com.musical16.converter.RateReplyConverter;
 import com.musical16.dto.rate.RateDTO;
+import com.musical16.dto.rate.RateReplyDTO;
 import com.musical16.dto.request.InputRate;
+import com.musical16.dto.request.InputRateReply;
 import com.musical16.dto.response.ResponseDTO;
 import com.musical16.repository.ProductRepository;
+import com.musical16.repository.RateReplyRepository;
 import com.musical16.repository.RateRepository;
 import com.musical16.repository.UserRepository;
 import com.musical16.service.IHelpService;
@@ -40,6 +48,12 @@ public class RateService implements IRateService {
 	
 	@Autowired
 	private ProductRepository productRepository;
+	
+	@Autowired
+	private RateReplyRepository rateReplyRepository;
+	
+	@Autowired
+	private RateReplyConverter rateReplyConverter;
 	
 	@Override
 	public List<RateDTO> findRateUser(HttpServletRequest req) {
@@ -80,6 +94,79 @@ public class RateService implements IRateService {
 		}
 	}
 	
+
+
+	@Override
+	public ResponseEntity<?> delete(Long id) {
+		ResponseDTO<RateDTO> result = new ResponseDTO<>();
+		RateEntity rate = rateRepository.findOne(id);
+		if(rate!=null) {
+			rateRepository.delete(rate);
+			//Cap nhat point rate cho product
+			RateUpdate(rate.getProduct());
+			result.setMessage("Xóa đánh giá thành công");
+			result.setObject(rateConverter.toDTO(rate));
+			return ResponseEntity.ok(result);
+		}else {
+			result.setMessage("Đánh giá không tồn tại");
+			return ResponseEntity.badRequest().body(result);
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> saveReply(InputRateReply input, HttpServletRequest req) {
+		ResponseDTO<RateReplyDTO> result = new ResponseDTO<>();
+		RateEntity rate = rateRepository.findOne(input.getRateId());
+		UserEntity user = userRepository.findByUserName(helpService.getName(req));
+		if(rate!=null) {
+			if(input.getId()!=null) {
+				RateReplyEntity oldReply = rateReplyRepository.findByIdAndUser(input.getId(), user);
+				if(oldReply!=null) {
+					RateReplyEntity reply = rateReplyConverter.toEntity(oldReply, input);
+					reply.setModifiedBy(user.getUserName());
+					reply.setModifiedDate(new Timestamp(System.currentTimeMillis()));
+					rateReplyRepository.save(reply);
+					result.setMessage("Cập nhật thành công phản hồi đánh giá !");
+					result.setObject(rateReplyConverter.toDTO(reply));
+					return ResponseEntity.ok(result);
+					
+				}else {
+					result.setMessage("Mã phản hồi đánh giá không tồn tại hoặc không thể thao tác !");
+					return ResponseEntity.badRequest().body(result);
+				}
+			}else {
+				RateReplyEntity reply = rateReplyConverter.toEntity(input);
+				reply.setRate(rate);
+				reply.setUser(user);
+				reply.setCreatedBy(user.getUserName());
+				reply.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+				rateReplyRepository.save(reply);
+				result.setMessage("Thêm phản hồi đánh giá thành công !");
+				result.setObject(rateReplyConverter.toDTO(reply));
+				return ResponseEntity.ok(result);
+			}
+		}else {
+			result.setMessage("Đánh giá không tồn tại !");
+			return ResponseEntity.badRequest().body(result);
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> deleteReply(Long id, HttpServletRequest req) {
+		ResponseDTO<RateReplyDTO> result = new ResponseDTO<>();
+		UserEntity user = userRepository.findByUserName(helpService.getName(req));
+		RateReplyEntity rateReply = rateReplyRepository.findByIdAndUser(id, user);
+		if(rateReply!=null) {
+			rateReplyRepository.delete(rateReply);
+			result.setMessage("Xóa phản hồi đánh giá thành công");
+			result.setObject(rateReplyConverter.toDTO(rateReply));
+			return ResponseEntity.ok(result);
+		}else {
+			result.setMessage("Mã phản hồi đánh giá không tồn tại hoặc bạn không thể xóa phản hồi này !");
+			return ResponseEntity.badRequest().body(result);
+		}
+	}
+	
 	public void RateUpdate(ProductEntity product) {
 		Integer point = 0;
 		for(RateEntity each : rateRepository.findByProductAndFlag(product, true)) {
@@ -87,6 +174,18 @@ public class RateService implements IRateService {
 		}
 		product.setRate_point((double) point/rateRepository.findByProductAndFlag(product, true).size());
 		productRepository.save(product);
+	}
+
+	@Override
+	public List<RateDTO> showAllRate() {
+		List<RateDTO> result = new ArrayList<>();
+		Order order = new Order(Direction.DESC, "createdDate");
+		Sort sort = new Sort(order);
+		for(RateEntity each : rateRepository.findAll(sort)) {
+			RateDTO rateDTO = rateConverter.toDTO(each);
+			result.add(rateDTO);
+		}
+		return result;
 	}
 
 }

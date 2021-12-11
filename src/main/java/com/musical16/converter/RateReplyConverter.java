@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.musical16.Entity.RateReplyEntity;
 import com.musical16.dto.rate.RateReplyDTO;
+import com.musical16.dto.request.InputRateReply;
 
 @Component
 public class RateReplyConverter {
@@ -23,6 +24,20 @@ public class RateReplyConverter {
 		rate.setModifiedDate(item.getModifiedDate());
 		rate.setModifiedBy(item.getModifiedBy());
 		return rate;
+	}
+
+	public RateReplyEntity toEntity(RateReplyEntity oldReply, InputRateReply input) {
+		RateReplyEntity rateReply = oldReply;
+		rateReply.setMessage(input.getMessage());
+		rateReply.setStatus(input.getStatus());
+		return rateReply;
+	}
+
+	public RateReplyEntity toEntity(InputRateReply input) {
+		RateReplyEntity reply = new RateReplyEntity();
+		reply.setStatus(input.getStatus());
+		reply.setMessage(input.getMessage());
+		return reply;
 	}
 
 	
