@@ -4,15 +4,16 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.http.ResponseEntity;
+
 import com.musical16.dto.news.CategoryNewDTO;
-import com.musical16.dto.response.MessageDTO;
 
 public interface ICategoryNewService {
 
-	MessageDTO save(CategoryNewDTO categoryNew, HttpServletRequest req);
+	ResponseEntity<?> save(CategoryNewDTO categoryNew, HttpServletRequest req);
 
 	List<CategoryNewDTO> findAll();
 
-	MessageDTO delete(Long id);
+	ResponseEntity<?> delete(Long id);
 
 }

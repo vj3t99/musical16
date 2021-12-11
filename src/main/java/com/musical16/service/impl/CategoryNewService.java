@@ -7,12 +7,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.musical16.Entity.CategoryNewEntity;
 import com.musical16.converter.CategoryNewConverter;
 import com.musical16.dto.news.CategoryNewDTO;
-import com.musical16.dto.response.MessageDTO;
+import com.musical16.dto.response.ResponseDTO;
 import com.musical16.repository.CategoryNewRepository;
 import com.musical16.service.ICategoryNewService;
 import com.musical16.service.IHelpService;
@@ -30,33 +31,28 @@ public class CategoryNewService implements ICategoryNewService{
 	private IHelpService helpService;
 
 	@Override
-	public MessageDTO save(CategoryNewDTO categoryNew, HttpServletRequest req) {
-		MessageDTO message = new MessageDTO();
+	public ResponseEntity<?> save(CategoryNewDTO categoryNew, HttpServletRequest req) {
+		ResponseDTO<CategoryNewDTO> result = new ResponseDTO<>();
 		CategoryNewEntity category = new CategoryNewEntity();
 		if(categoryNew.getId()!=null) {
 			category = categoryNewRepository.findOne(categoryNew.getId());
-			if(categoryNewRepository.findByCode(categoryNew.getCode())!=null) {
-				message.setMessage("Mã code đã tồn tại. Vui lòng thử mã code khác");
-			}else {
-				CategoryNewEntity newCategoryNew = categoryNewConverter.toEntity(categoryNew, category);
-				newCategoryNew.setModifiedBy(helpService.getName(req));
-				newCategoryNew.setModifiedDate(new Timestamp(System.currentTimeMillis()));
-				categoryNewRepository.save(newCategoryNew);
-				message.setMessage("Cập nhật danh mục bài viết thành công");
-			}
+			CategoryNewEntity newCategoryNew = categoryNewConverter.toEntity(categoryNew, category);
+			newCategoryNew.setModifiedBy(helpService.getName(req));
+			newCategoryNew.setModifiedDate(new Timestamp(System.currentTimeMillis()));
+			categoryNewRepository.save(newCategoryNew);
+			result.setMessage("Cập nhật danh mục bài viết thành công");
+			result.setObject(categoryNewConverter.toDTO(newCategoryNew));
+			return ResponseEntity.ok(result);
 			
 		}else {
 			category = categoryNewConverter.toEntity(categoryNew);
-			if(categoryNewRepository.findByCode(categoryNew.getCode())!=null) {
-				message.setMessage(" Mã code đã tồn tại. Vui lòng thử mã code khác"); 
-			}else {
-				category.setCreatedBy(helpService.getName(req));
-				category.setCreatedDate(new Timestamp(System.currentTimeMillis()));
-				categoryNewRepository.save(category);
-				message.setMessage("Thêm mới danh mục bài viết thành công"); 
-			}
+			category.setCreatedBy(helpService.getName(req));
+			category.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+			categoryNewRepository.save(category);
+			result.setMessage("Thêm mới danh mục bài viết thành công"); 
+			result.setObject(categoryNewConverter.toDTO(category));
+			return ResponseEntity.ok(result);
 		}
-		return message;
 	}
 
 	@Override
@@ -71,17 +67,19 @@ public class CategoryNewService implements ICategoryNewService{
 	}
 
 	@Override
-	public MessageDTO delete(Long id) {
-		MessageDTO message = new MessageDTO();
+	public ResponseEntity<?> delete(Long id) {
+		ResponseDTO<CategoryNewDTO> result = new ResponseDTO<>();
 		if(categoryNewRepository.findOne(id)!=null) {
 			CategoryNewEntity entity = categoryNewRepository.findOne(id);
 			categoryNewRepository.delete(entity);
-			message.setMessage("Đã xóa thành công danh mục bài viết " + entity.getName());
+			result.setMessage("Đã xóa thành công danh mục bài viết " + entity.getName());
+			result.setObject(categoryNewConverter.toDTO(entity));
+			return ResponseEntity.ok(result);
 		}else {
-			message.setMessage("Không tìm thấy mã danh mục bài viết : ");
+			result.setMessage("Không tìm thấy mã danh mục bài viết : ");
+			return ResponseEntity.badRequest().body(result);
 		}
 		
-		return message;
 	}
 
 	
