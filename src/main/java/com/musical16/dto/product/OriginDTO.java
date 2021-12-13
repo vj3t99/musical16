@@ -13,6 +13,7 @@ public class OriginDTO extends BaseDTO{
 	private String name;
 	
 	@NotEmpty(message = "Code xuất xứ không được rỗng !")
+	@Size(min = 3, max = 32, message = "Code xuất xứ phải trong khoảng 3 đến 32 kí tự")
 	private String code;
 	public String getName() {
 		return name;

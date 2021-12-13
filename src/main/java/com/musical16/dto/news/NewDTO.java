@@ -9,7 +9,6 @@ public class NewDTO extends BaseDTO{
 	private String code;
 	private String shortdescription;
 	private String detail;
-	private String image;
 	private String url;
 	private Integer status;
 	private Long categoryNews;
@@ -36,12 +35,6 @@ public class NewDTO extends BaseDTO{
 	}
 	public void setDetail(String detail) {
 		this.detail = detail;
-	}
-	public String getImage() {
-		return image;
-	}
-	public void setImage(String image) {
-		this.image = image;
 	}
 	public String getUrl() {
 		return url;

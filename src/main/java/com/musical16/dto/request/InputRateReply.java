@@ -1,11 +1,20 @@
 package com.musical16.dto.request;
 
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 public class InputRateReply{
 
 	private Long id;
+	
+	@NotEmpty(message = "Mã đánh giá không được rỗng")
 	private Long rateId;
+	
+	@NotEmpty(message = "Phản hồi đánh giá không được rỗng")
+	@Size(min = 3, max = 100, message = "Phản hồi đánh giá phải từ 3 đến 100 kí tự")
 	private String message;
+	
 	private Integer status;
 	public Long getRateId() {
 		return rateId;

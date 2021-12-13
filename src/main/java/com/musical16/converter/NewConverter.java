@@ -4,28 +4,30 @@ import org.springframework.stereotype.Component;
 
 import com.musical16.Entity.NewEntity;
 import com.musical16.dto.news.NewDTO;
+import com.musical16.dto.request.InputNew;
 
 @Component
 public class NewConverter {
 
-	public NewEntity toEntity(NewDTO newDTO) {
+	
+	public NewEntity toEntity(InputNew input) {
 		NewEntity news = new NewEntity();
-		news.setName(newDTO.getName());
-		news.setCode(newDTO.getCode());
-		news.setShortdescription(newDTO.getShortdescription());
-		news.setDetail(newDTO.getDetail());
-		news.setImage(newDTO.getImage());
-		news.setUrl(newDTO.getUrl());
+		news.setTitle(input.getTitle());
+		news.setName(input.getName());
+		news.setCode(input.getCode());
+		news.setShortdescription(input.getShortdescription());
+		news.setDetail(input.getDetail());
+		news.setUrl(input.getUrl());
 		return news;
 	}
 
-	public NewEntity toEntity(NewDTO newDTO, NewEntity news) {
-		news.setName(newDTO.getName());
-		news.setCode(newDTO.getCode());
-		news.setShortdescription(newDTO.getShortdescription());
-		news.setDetail(newDTO.getDetail());
-		news.setImage(newDTO.getImage());
-		news.setUrl(newDTO.getUrl());
+	public NewEntity toEntity(InputNew input, NewEntity news) {
+		news.setTitle(input.getTitle());
+		news.setName(input.getName());
+		news.setCode(input.getCode());
+		news.setShortdescription(input.getShortdescription());
+		news.setDetail(input.getDetail());
+		news.setUrl(input.getUrl());
 		return news;
 	}
 
@@ -37,7 +39,6 @@ public class NewConverter {
 		news.setCode(newEntity.getCode());
 		news.setShortdescription(newEntity.getShortdescription());
 		news.setDetail(newEntity.getDetail());
-		news.setImage(newEntity.getImage());
 		news.setUrl(newEntity.getUrl());
 		news.setCreatedBy(newEntity.getCreatedBy());
 		news.setCreatedDate(newEntity.getCreatedDate());
@@ -45,6 +46,7 @@ public class NewConverter {
 		news.setModifiedDate(newEntity.getModifiedDate());
 		return news;
 	}
+
 
 	
 }

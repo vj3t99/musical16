@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.musical16.dto.news.NewDTO;
+import com.musical16.dto.request.InputNew;
 import com.musical16.dto.response.MessageDTO;
 import com.musical16.dto.response.Page;
 
@@ -14,7 +15,7 @@ public interface INewService {
 
 	Page<NewDTO> findAll(Integer page, String[] sort, Long id);
 
-	ResponseEntity<?> save(NewDTO newDTO, HttpServletRequest req);
+	ResponseEntity<?> save(InputNew input, HttpServletRequest req);
 
 	ResponseEntity<?> delete(Long id);
 

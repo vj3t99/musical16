@@ -67,7 +67,7 @@ public class UserAPI {
     
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/userinfo")
-    public MessageDTO updateUser(@RequestBody UpdateUserInfoDTO user, HttpServletRequest req) throws Exception {
+    public MessageDTO updateUser(@Valid @RequestBody UpdateUserInfoDTO user, HttpServletRequest req) throws Exception {
     	return userService.save(user, req);
     }
     
@@ -132,7 +132,7 @@ public class UserAPI {
 	}
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping(value = "/changepassword")
-	public MessageDTO changePassword(@RequestBody ChangePassword user, HttpServletRequest req ) {
+	public MessageDTO changePassword(@Valid @RequestBody ChangePassword user, HttpServletRequest req ) {
 		return userService.changePassword(user,req);
 	}
 }

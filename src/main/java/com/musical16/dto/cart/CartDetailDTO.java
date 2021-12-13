@@ -1,16 +1,25 @@
 package com.musical16.dto.cart;
 
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 import com.musical16.dto.BaseDTO;
 import com.musical16.dto.product.ProductDTO;
 
 public class CartDetailDTO extends BaseDTO{
 
 	private ProductDTO product;
+	
+	@NotNull(message = "Mã sản phẩm không được rỗng")
 	private Long productId;
-	@Min(value = 1, message = "Số lượng không hợp lệ")
+	
+	@NotNull(message = "Số lượng không được rỗng")
+	@Min(value = 1, message = "Số lượng phải lớn hơn 1")
+	@Max(value = 1000, message = "Số lượng phải nhỏ hơn 1000")
 	private Integer quantity; 
+	
 	private Double price;
 
 	

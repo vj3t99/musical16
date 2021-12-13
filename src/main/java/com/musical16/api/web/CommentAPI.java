@@ -1,6 +1,7 @@
 package com.musical16.api.web;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class CommentAPI {
 	
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("/comment")
-	public ResponseEntity<?> saveComment(HttpServletRequest req, @RequestBody InputComment comment){
+	public ResponseEntity<?> saveComment(HttpServletRequest req,@Valid @RequestBody InputComment comment){
 		return commentService.save(comment,req);
 	}
 	
@@ -44,7 +45,7 @@ public class CommentAPI {
 	
 	@PreAuthorize("hasAnyRole('USER','ADMIN','MANAGER')")
 	@PostMapping("/commentReply")
-	public ResponseEntity<?> saveCommentReply(HttpServletRequest req, @RequestBody InputCommentReply comment){
+	public ResponseEntity<?> saveCommentReply(HttpServletRequest req,@Valid @RequestBody InputCommentReply comment){
 		return commentService.saveReply(comment,req);
 	}
 	

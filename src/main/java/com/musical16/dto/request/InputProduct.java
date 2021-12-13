@@ -1,7 +1,9 @@
 package com.musical16.dto.request;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -10,12 +12,15 @@ public class InputProduct {
 	private Long id;
     
 	@NotEmpty(message = "Tên sản phẩm không được rỗng !")
+	@Size(min = 3, max = 255, message = "Vui lòng nhập tên trong khoảng 3 đến 255 kí tự")
 	private String name;
 	
 	@NotEmpty(message = "Mô tả ngắn không được rỗng !")
+	@Size(min = 10, max = 255, message = "Vui lòng nhập mô tả ngắn trong khoảng 10 đến 255 kí tự")
 	private String shortdescription;
 	
 	@NotEmpty(message = "Chi tiết sản phẩm không được rỗng !")
+	@Size(min = 20, message = "Vui lòng nhập chi tiết trên 20 kí tự")
 	private String detail;
 	
 	@NotNull(message = "Giá không được rỗng")
@@ -27,12 +32,14 @@ public class InputProduct {
 	private Long originId;
 	
 	@NotNull(message = "Số lượng không được rỗng")
-	@Min(value = 0, message = "Số lượng không hợp lệ")
+	@Min(value = 0, message = "Số lượng phải là số dương")
+	@Max(value = 1000, message = "Số lượng không thể lớn hơn 1000")
 	private Integer quantity;
 	
 	private String[] url;
 	
 	@NotEmpty(message = "Code sản phẩm không được rỗng !")
+	@Size(min = 3, max = 255, message = "Vui lòng nhập code trong khoảng 3 đến 255 kí tự")
 	private String code;
 	
 	@NotNull(message = "Mã thể loại không được rỗng")
@@ -40,7 +47,8 @@ public class InputProduct {
 	private Long categoryId;
 	
 	@NotNull(message = "Bảo hành không được rỗng")
-	@Min(value = 0, message = "Bảo hành không hợp lệ")
+	@Min(value = 0, message = "Bảo hành phải là số dương")
+	@Max(value = 100, message = "Bảo hành phải nhỏ hơn 100")
 	private Integer warranty;
 
 	public Long getId() {

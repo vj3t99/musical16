@@ -3,6 +3,7 @@ package com.musical16.api.web;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,7 @@ public class RateAPI {
 	
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("/rate")
-	public ResponseEntity<?> save(@RequestBody InputRate input, HttpServletRequest req){
+	public ResponseEntity<?> save(@Valid @RequestBody InputRate input, HttpServletRequest req){
 		return rateService.save(input, req);
 	}
 	
@@ -51,7 +52,7 @@ public class RateAPI {
 	
 	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
 	@PostMapping("/rateReply")
-	public ResponseEntity<?> saveReply(@RequestBody InputRateReply input, HttpServletRequest req){
+	public ResponseEntity<?> saveReply(@Valid @RequestBody InputRateReply input, HttpServletRequest req){
 		return rateService.saveReply(input, req);
 	}
 	

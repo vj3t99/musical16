@@ -1,5 +1,8 @@
 package com.musical16.dto.request;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
@@ -30,6 +33,9 @@ public class RegisterDTO {
 	@Size(min = 8, max = 32, message = "Địa chỉ phải từ 8 đến 32 kí tự !")
 	private String address;
 	
+	@NotNull(message = "Giới tính không được rỗng")
+	@Min(value = 0, message = "Giới tính phải là số dương")
+	@Max(value = 2, message = "Giới tính phải bé hơn 2")
 	private Integer sex;
 	
 	@NotBlank

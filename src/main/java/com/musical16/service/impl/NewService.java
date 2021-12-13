@@ -21,6 +21,7 @@ import com.musical16.Entity.CategoryNewEntity;
 import com.musical16.Entity.NewEntity;
 import com.musical16.converter.NewConverter;
 import com.musical16.dto.news.NewDTO;
+import com.musical16.dto.request.InputNew;
 import com.musical16.dto.response.MessageDTO;
 import com.musical16.dto.response.Page;
 import com.musical16.dto.response.ResponseDTO;
@@ -101,14 +102,14 @@ public class NewService implements INewService{
 	}
 
 	@Override
-	public ResponseEntity<?> save(NewDTO newDTO, HttpServletRequest req) {
+	public ResponseEntity<?> save(InputNew input, HttpServletRequest req) {
 		ResponseDTO<NewDTO> result = new ResponseDTO<>();
 		NewEntity news = new NewEntity();
-		if(newDTO.getId()!=null) {
-			if(categoryNewRepository.findOne(newDTO.getCategoryNews())!=null) {
-				news = newRepository.findOne(newDTO.getId());
-				NewEntity nNew = newConverter.toEntity(newDTO,news);
-				nNew.setTitle("["+nNew.getCategoryNews().getName()+"] "+nNew.getName());
+		if(input.getId()!=null) {
+			if(categoryNewRepository.findOne(input.getCategoryNews())!=null) {
+				news = newRepository.findOne(input.getId());
+				NewEntity nNew = newConverter.toEntity(input,news);
+				news.setCategoryNews(categoryNewRepository.findOne(input.getCategoryNews()));
 				nNew.setModifiedBy(helpService.getName(req));
 				nNew.setModifiedDate(new Timestamp(System.currentTimeMillis()));
 				newRepository.save(nNew);
@@ -116,17 +117,13 @@ public class NewService implements INewService{
 				result.setObject(newConverter.toDTO(nNew));
 				return ResponseEntity.ok(result);
 			}else {
-				result.setMessage("không tìm thấy mã thể loại bài viết : "+newDTO.getCategoryNews());
+				result.setMessage("không tìm thấy mã thể loại bài viết : "+input.getCategoryNews());
 				return ResponseEntity.badRequest().body(result);
 			}
 		}else {
-			if(categoryNewRepository.findOne(newDTO.getCategoryNews())!=null) {
-				news = newConverter.toEntity(newDTO);
-				news.setCategoryNews(categoryNewRepository.findOne(newDTO.getCategoryNews()));
-				String image = "default.png";
-				news.setImage(image);
-				news.setUrl(helpService.getSiteURL(req)+"/downloadFile/"+image);
-				news.setTitle("["+news.getCategoryNews().getName()+"] "+news.getName());
+			if(categoryNewRepository.findOne(input.getCategoryNews())!=null) {
+				news = newConverter.toEntity(input);
+				news.setCategoryNews(categoryNewRepository.findOne(input.getCategoryNews()));
 				news.setCreatedBy(helpService.getName(req));
 				news.setCreatedDate(new Timestamp(System.currentTimeMillis()));
 				newRepository.save(news);
@@ -134,7 +131,7 @@ public class NewService implements INewService{
 				result.setObject(newConverter.toDTO(news));
 				return ResponseEntity.ok(result);
 			}else {
-				result.setMessage("không tìm thấy mã thể loại bài viết : "+newDTO.getCategoryNews());
+				result.setMessage("không tìm thấy mã thể loại bài viết : "+input.getCategoryNews());
 				return ResponseEntity.badRequest().body(result);
 			}
 		}
@@ -168,15 +165,11 @@ public class NewService implements INewService{
 			String filename = fileStorageService.storeFile(file);
 			String url = helpService.getSiteURL(req)+"/downloadFile/"+filename;
 			NewEntity news = newRepository.findOne(id);
-			if(!news.getImage().equals("default.png")) {	
-				fileStorageService.deleteFile(news.getImage());
-			}
-			news.setImage(filename);
 			news.setUrl(url);
 			news.setModifiedBy(helpService.getName(req));
 			news.setModifiedDate(new Timestamp(System.currentTimeMillis()));
 			newRepository.save(news);
-			message.setMessage("Đã upload hình "+news.getImage() +" thành công");
+			message.setMessage("Đã upload hình thành công");
 		}else {
 			message.setMessage("Mã bài viết không tồn tại");
 		}

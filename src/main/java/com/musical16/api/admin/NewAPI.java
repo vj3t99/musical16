@@ -2,6 +2,7 @@ package com.musical16.api.admin;
 
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.musical16.dto.news.NewDTO;
+import com.musical16.dto.request.InputNew;
 import com.musical16.dto.response.MessageDTO;
 import com.musical16.dto.response.Page;
 import com.musical16.service.INewService;
@@ -40,8 +42,8 @@ public class NewAPI {
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/new")
-	public ResponseEntity<?> save(@RequestBody NewDTO newDTO, HttpServletRequest req) {
-		return newService.save(newDTO, req);
+	public ResponseEntity<?> save(@Valid @RequestBody InputNew input, HttpServletRequest req) {
+		return newService.save(input, req);
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")

@@ -36,20 +36,25 @@ public class CategoryNewService implements ICategoryNewService{
 		CategoryNewEntity category = new CategoryNewEntity();
 		if(categoryNew.getId()!=null) {
 			category = categoryNewRepository.findOne(categoryNew.getId());
-			CategoryNewEntity newCategoryNew = categoryNewConverter.toEntity(categoryNew, category);
-			newCategoryNew.setModifiedBy(helpService.getName(req));
-			newCategoryNew.setModifiedDate(new Timestamp(System.currentTimeMillis()));
-			categoryNewRepository.save(newCategoryNew);
-			result.setMessage("Cập nhật danh mục bài viết thành công");
-			result.setObject(categoryNewConverter.toDTO(newCategoryNew));
-			return ResponseEntity.ok(result);
+			if(category!=null) {
+				CategoryNewEntity newCategoryNew = categoryNewConverter.toEntity(categoryNew, category);
+				newCategoryNew.setModifiedBy(helpService.getName(req));
+				newCategoryNew.setModifiedDate(new Timestamp(System.currentTimeMillis()));
+				categoryNewRepository.save(newCategoryNew);
+				result.setMessage("Cập nhật thể loại bài viết thành công");
+				result.setObject(categoryNewConverter.toDTO(newCategoryNew));
+				return ResponseEntity.ok(result);
+			}else {
+				result.setMessage("Mã thể loại bài viết không tồn tại");
+				return ResponseEntity.badRequest().body(result);
+			}
 			
 		}else {
 			category = categoryNewConverter.toEntity(categoryNew);
 			category.setCreatedBy(helpService.getName(req));
 			category.setCreatedDate(new Timestamp(System.currentTimeMillis()));
 			categoryNewRepository.save(category);
-			result.setMessage("Thêm mới danh mục bài viết thành công"); 
+			result.setMessage("Thêm mới thể loại bài viết thành công"); 
 			result.setObject(categoryNewConverter.toDTO(category));
 			return ResponseEntity.ok(result);
 		}
@@ -72,11 +77,11 @@ public class CategoryNewService implements ICategoryNewService{
 		if(categoryNewRepository.findOne(id)!=null) {
 			CategoryNewEntity entity = categoryNewRepository.findOne(id);
 			categoryNewRepository.delete(entity);
-			result.setMessage("Đã xóa thành công danh mục bài viết " + entity.getName());
+			result.setMessage("Đã xóa thành công thể loại bài viết " + entity.getName());
 			result.setObject(categoryNewConverter.toDTO(entity));
 			return ResponseEntity.ok(result);
 		}else {
-			result.setMessage("Không tìm thấy mã danh mục bài viết : ");
+			result.setMessage("Không tìm thấy mã thể loại bài viết : ");
 			return ResponseEntity.badRequest().body(result);
 		}
 		

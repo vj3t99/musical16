@@ -10,7 +10,7 @@ import javax.persistence.Table;
 @Table(name = "news")
 public class NewEntity extends BaseEntity{
 
-	@Column(name = "name")
+	@Column(name = "name", unique = true)
 	private String name;
 	@Column(name = "title")
 	private String title;
@@ -18,10 +18,8 @@ public class NewEntity extends BaseEntity{
 	private String code;
 	@Column(name = "shortdescription")
 	private String shortdescription;
-	@Column(name = "detail")
+	@Column(name = "detail", columnDefinition = "TEXT")
 	private String detail;
-	@Column(name = "image")
-	private String image;
 	@Column(name = "url")
 	private String url;
 	@Column(name = "status")
@@ -52,12 +50,6 @@ public class NewEntity extends BaseEntity{
 	}
 	public void setDetail(String detail) {
 		this.detail = detail;
-	}
-	public String getImage() {
-		return image;
-	}
-	public void setImage(String image) {
-		this.image = image;
 	}
 	public String getUrl() {
 		return url;
