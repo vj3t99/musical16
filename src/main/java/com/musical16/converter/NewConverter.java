@@ -12,7 +12,6 @@ public class NewConverter {
 	
 	public NewEntity toEntity(InputNew input) {
 		NewEntity news = new NewEntity();
-		news.setTitle(input.getTitle());
 		news.setName(input.getName());
 		news.setCode(input.getCode());
 		news.setShortdescription(input.getShortdescription());
@@ -22,7 +21,6 @@ public class NewConverter {
 	}
 
 	public NewEntity toEntity(InputNew input, NewEntity news) {
-		news.setTitle(input.getTitle());
 		news.setName(input.getName());
 		news.setCode(input.getCode());
 		news.setShortdescription(input.getShortdescription());

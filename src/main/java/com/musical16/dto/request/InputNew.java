@@ -12,10 +12,6 @@ public class InputNew {
 	@Size(min = 5, max = 255, message = "Vui lòng nhập tên trong khoảng 5 đến 255 kí tự")
 	private String name;
 	
-	@NotEmpty(message = "Tiêu đề không được rỗng !")
-	@Size(min = 5, max = 255, message = "Vui lòng nhập tiêu đề trong khoảng 5 đến 255 kí tự")
-	private String title;
-	
 	@NotEmpty(message = "Code bài viết không được rỗng !")
 	@Size(min = 3, max = 255, message = "Vui lòng nhập code trong khoảng 3 đến 255 kí tự")
 	private String code;
@@ -45,12 +41,6 @@ public class InputNew {
 	}
 	public void setName(String name) {
 		this.name = name;
-	}
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
 	}
 	public String getCode() {
 		return code;

@@ -109,7 +109,9 @@ public class NewService implements INewService{
 			if(categoryNewRepository.findOne(input.getCategoryNews())!=null) {
 				news = newRepository.findOne(input.getId());
 				NewEntity nNew = newConverter.toEntity(input,news);
-				news.setCategoryNews(categoryNewRepository.findOne(input.getCategoryNews()));
+				CategoryNewEntity category = categoryNewRepository.findOne(input.getCategoryNews());
+				nNew.setTitle("["+category.getName()+"]"+" "+nNew.getName());
+				nNew.setCategoryNews(category);
 				nNew.setModifiedBy(helpService.getName(req));
 				nNew.setModifiedDate(new Timestamp(System.currentTimeMillis()));
 				newRepository.save(nNew);
@@ -123,7 +125,9 @@ public class NewService implements INewService{
 		}else {
 			if(categoryNewRepository.findOne(input.getCategoryNews())!=null) {
 				news = newConverter.toEntity(input);
-				news.setCategoryNews(categoryNewRepository.findOne(input.getCategoryNews()));
+				CategoryNewEntity category = categoryNewRepository.findOne(input.getCategoryNews());
+				news.setTitle("["+category.getName()+"]"+" "+news.getName());
+				news.setCategoryNews(category);
 				news.setCreatedBy(helpService.getName(req));
 				news.setCreatedDate(new Timestamp(System.currentTimeMillis()));
 				newRepository.save(news);
