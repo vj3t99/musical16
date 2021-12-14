@@ -1,5 +1,6 @@
 package com.musical16.converter;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.musical16.Entity.NewEntity;
@@ -9,6 +10,8 @@ import com.musical16.dto.request.InputNew;
 @Component
 public class NewConverter {
 
+	@Autowired
+	private CategoryNewConverter categoryNewConverter;
 	
 	public NewEntity toEntity(InputNew input) {
 		NewEntity news = new NewEntity();
@@ -38,6 +41,7 @@ public class NewConverter {
 		news.setShortdescription(newEntity.getShortdescription());
 		news.setDetail(newEntity.getDetail());
 		news.setUrl(newEntity.getUrl());
+		news.setCategoryNews(categoryNewConverter.toDTO(newEntity.getCategoryNews()));
 		news.setCreatedBy(newEntity.getCreatedBy());
 		news.setCreatedDate(newEntity.getCreatedDate());
 		news.setModifiedBy(newEntity.getModifiedBy());
