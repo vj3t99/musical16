@@ -27,14 +27,14 @@ public class UserConverter {
 	public UserDTO toDTO(UserEntity userEntity) {
 		UserDTO userDTO = new UserDTO();
 		userDTO.setId(userEntity.getId());
-		userDTO.setUserName(userEntity.getUserName());
-		userDTO.setFullName(userEntity.getFullName());
+		userDTO.setUsername(userEntity.getUserName());
+		userDTO.setFullname(userEntity.getFullName());
 		userDTO.setEmail(userEntity.getEmail());
 		userDTO.setAddress(userEntity.getAddress());
 		userDTO.setPhone(userEntity.getPhone());
-		userDTO.setImage(userEntity.getImage());
 		userDTO.setUrl(userEntity.getUrl());
 		userDTO.setSex(userEntity.getSex());
+		userDTO.setStatus(userEntity.getStatus());
 		userDTO.setCreatedBy(userEntity.getCreatedBy());
 		userDTO.setCreatedDate(userEntity.getCreatedDate());
 		userDTO.setModifiedBy(userEntity.getModifiedBy());

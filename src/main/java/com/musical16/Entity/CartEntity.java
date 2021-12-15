@@ -32,7 +32,7 @@ public class CartEntity {
 	@Column(name = "total_price")
 	private Double totalPrice;
 	
-	@OneToMany(mappedBy = "cart")
+	@OneToMany(mappedBy = "cart",cascade = CascadeType.ALL)
 	private List<CartDetailEntity> cartDetail = new ArrayList<>();
 
 	public Long getId() {

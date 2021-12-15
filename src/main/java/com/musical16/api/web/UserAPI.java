@@ -18,11 +18,15 @@ import com.musical16.config.TokenProvider;
 import com.musical16.converter.UserConverter;
 import com.musical16.dto.request.ChangePassword;
 import com.musical16.dto.request.ForgotPasswordDTO;
+import com.musical16.dto.request.InputUser;
 import com.musical16.dto.request.LoginDTO;
 import com.musical16.dto.request.RegisterDTO;
+import com.musical16.dto.request.RegisterUserAdmin;
 import com.musical16.dto.request.UpdateUserInfoDTO;
 import com.musical16.dto.response.MessageDTO;
+import com.musical16.dto.response.Page;
 import com.musical16.dto.response.TokenDTO;
+import com.musical16.dto.response.UserAdminDTO;
 import com.musical16.dto.response.UserDTO;
 import com.musical16.repository.UserRepository;
 import com.musical16.service.IHelpService;
@@ -130,9 +134,39 @@ public class UserAPI {
 		return userService.resetpassword(token);
 		
 	}
-	@PreAuthorize("hasRole('USER')")
+	@PreAuthorize("hasAnyRole('USER','MANAGER','ADMIN')")
 	@PostMapping(value = "/changepassword")
 	public MessageDTO changePassword(@Valid @RequestBody ChangePassword user, HttpServletRequest req ) {
 		return userService.changePassword(user,req);
 	}
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/admin/user")
+	public Page<UserAdminDTO> showAll(@RequestParam(value = "page", required = false) Integer page){
+		return userService.showAll(page);
+	}
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/admin/user/{id}")
+	public ResponseEntity<?> showOne(@PathVariable(value = "id", required = true) Long id ){
+		return userService.showOne(id);
+	}
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@PutMapping("/admin/user")
+	public ResponseEntity<?> saveUser(@Valid @RequestBody InputUser input, HttpServletRequest req){
+		return userService.save(input, req);
+	}
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@PostMapping("/admin/user")
+	public ResponseEntity<?> insertUser(@Valid @RequestBody RegisterUserAdmin input, HttpServletRequest req){
+		return userService.insert(input, req);
+	}
+	
+	@DeleteMapping("/admin/user/{id}")
+	public ResponseEntity<?> deleteUser(@PathVariable("id") Long id){
+		return userService.delete(id);
+	}
+	
 }

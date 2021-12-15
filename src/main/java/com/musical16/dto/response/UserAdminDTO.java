@@ -1,8 +1,11 @@
 package com.musical16.dto.response;
 
-import com.musical16.dto.BaseDTO;
+import java.util.List;
 
-public class UserDTO extends BaseDTO{
+import com.musical16.dto.BaseDTO;
+import com.musical16.dto.role.RoleDTO;
+
+public class UserAdminDTO extends BaseDTO{
 
 	private String username;
 	
@@ -19,6 +22,8 @@ public class UserDTO extends BaseDTO{
 	private Integer sex;
 	
 	private Integer status;
+	
+	private List<RoleDTO> roles;
 	
 
 	public String getUsername() {
@@ -84,7 +89,14 @@ public class UserDTO extends BaseDTO{
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
-	
+
+	public List<RoleDTO> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<RoleDTO> roles) {
+		this.roles = roles;
+	}
 	
 	
 }

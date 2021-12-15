@@ -40,9 +40,6 @@ public class UserEntity extends BaseEntity {
 	@Column(name = "address")
 	private String address;
 	
-	@Column(name = "image")
-	private String image;
-	
 	@Column(name = "url")
 	private String url;
 	
@@ -146,14 +143,6 @@ public class UserEntity extends BaseEntity {
 
 	public void setToken(String token) {
 		this.token = token;
-	}
-
-	public String getImage() {
-		return image;
-	}
-
-	public void setImage(String image) {
-		this.image = image;
 	}
 
 	public String getUrl() {

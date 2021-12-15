@@ -29,7 +29,7 @@ public class MailHelp {
                 + "<p>Bỏ qua email này nếu bạn chưa sẵn sàng tham gia cùng 16musical, "
                 + "hoặc bạn không có bất kì yêu cầu nào.</p>";
         
-        message.setContent(htmlMsg, "text/html");
+        message.setContent(htmlMsg, "text/html; charset=UTF-8");
         
         helper.setTo(email);
         
@@ -55,7 +55,7 @@ public class MailHelp {
                 + "<p>Bỏ qua email này nếu không phải là bạn, "
                 + "hoặc bạn không có bất kì yêu cầu nào.</p>";
         
-        message.setContent(htmlMsg, "text/html");
+        message.setContent(htmlMsg, "text/html; charset=UTF-8");
         
         helper.setTo(email);
         
@@ -74,9 +74,9 @@ public class MailHelp {
         MimeMessageHelper helper = new MimeMessageHelper(message, multipart, "utf-8");
         
         String htmlMsg = "<p>Hello, "+email+"</p>"
-                + "<p>Day la password moi cua ban : "+password+" .</p>";
+                + "<p>Đây là mật khẩu mới của bạn : "+password+" .</p>";
         
-        message.setContent(htmlMsg, "text/html");
+        message.setContent(htmlMsg, "text/html; charset=UTF-8");
         
         helper.setTo(email);
         

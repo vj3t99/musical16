@@ -7,9 +7,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.musical16.dto.request.ChangePassword;
 import com.musical16.dto.request.ForgotPasswordDTO;
+import com.musical16.dto.request.InputUser;
 import com.musical16.dto.request.RegisterDTO;
+import com.musical16.dto.request.RegisterUserAdmin;
 import com.musical16.dto.request.UpdateUserInfoDTO;
 import com.musical16.dto.response.MessageDTO;
+import com.musical16.dto.response.Page;
+import com.musical16.dto.response.UserAdminDTO;
 import com.musical16.dto.response.UserDTO;
 
 public interface IUserService {
@@ -31,5 +35,15 @@ public interface IUserService {
 	public MessageDTO uploadImage(MultipartFile file, HttpServletRequest req);
 
 	public MessageDTO changePassword(ChangePassword user, HttpServletRequest req);
+
+	public Page<UserAdminDTO> showAll(Integer page);
+
+	public ResponseEntity<?> showOne(Long id);
+
+	public ResponseEntity<?> save(InputUser input, HttpServletRequest req);
+
+	public ResponseEntity<?> insert(RegisterUserAdmin input, HttpServletRequest req);
+
+	public ResponseEntity<?> delete(Long id);
 	
 }

@@ -1,16 +1,18 @@
-package com.musical16.dto.response;
+package com.musical16.dto.request;
 
-import com.musical16.dto.BaseDTO;
-
-public class UserDTO extends BaseDTO{
+public class RegisterUserAdmin {
 
 	private String username;
+	
+	private String password;
 	
 	private String fullname;
 	
 	private String email;
 	
 	private String address;
+	
+	private String image;
 	
 	private String url;
 	
@@ -20,6 +22,7 @@ public class UserDTO extends BaseDTO{
 	
 	private Integer status;
 	
+	private Long role;
 
 	public String getUsername() {
 		return username;
@@ -27,6 +30,14 @@ public class UserDTO extends BaseDTO{
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public String getFullname() {
@@ -51,6 +62,14 @@ public class UserDTO extends BaseDTO{
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 
 	public String getUrl() {
@@ -84,7 +103,14 @@ public class UserDTO extends BaseDTO{
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
-	
+
+	public Long getRole() {
+		return role;
+	}
+
+	public void setRole(Long role) {
+		this.role = role;
+	}
 	
 	
 }

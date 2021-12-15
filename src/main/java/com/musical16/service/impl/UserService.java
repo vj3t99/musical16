@@ -1,6 +1,7 @@
 package com.musical16.service.impl;
 
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -10,7 +11,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,17 +31,22 @@ import org.springframework.web.multipart.MultipartFile;
 import com.musical16.Entity.CartEntity;
 import com.musical16.Entity.RoleEntity;
 import com.musical16.Entity.UserEntity;
+import com.musical16.converter.UserAdminConverter;
 import com.musical16.converter.UserConverter;
 import com.musical16.dto.request.ChangePassword;
 import com.musical16.dto.request.ForgotPasswordDTO;
+import com.musical16.dto.request.InputUser;
 import com.musical16.dto.request.RegisterDTO;
+import com.musical16.dto.request.RegisterUserAdmin;
 import com.musical16.dto.request.UpdateUserInfoDTO;
 import com.musical16.dto.response.MessageDTO;
+import com.musical16.dto.response.Page;
 import com.musical16.dto.response.ResponseDTO;
+import com.musical16.dto.response.UserAdminDTO;
 import com.musical16.dto.response.UserDTO;
 import com.musical16.repository.CartRepository;
+import com.musical16.repository.RoleRepository;
 import com.musical16.repository.UserRepository;
-import com.musical16.service.IFileStorageService;
 import com.musical16.service.IHelpService;
 import com.musical16.service.IRoleService;
 import com.musical16.service.IUserService;
@@ -44,6 +54,9 @@ import com.musical16.service.IUserService;
 
 @Service(value = "userService")
 public class UserService implements UserDetailsService, IUserService{
+	
+	@Value("${jpa.page.limit}")
+	private Integer PAGE_LIMIT;
 	
 	@Autowired
     private IRoleService roleService;
@@ -66,10 +79,15 @@ public class UserService implements UserDetailsService, IUserService{
     @Autowired
     private BCryptPasswordEncoder bcryptEncoder;
     
+//    @Autowired
+//    private IFileStorageService fileStorageService;
+
     @Autowired
-    private IFileStorageService fileStorageService;
-
-
+    private UserAdminConverter userAdminConverter;
+    
+    @Autowired
+    private RoleRepository roleRepository;
+    
 	@Override
 	public ResponseEntity<?> save(RegisterDTO user, HttpServletRequest req) throws Exception,MethodArgumentNotValidException {
 		ResponseDTO<UserDTO> response = new ResponseDTO<>();
@@ -83,7 +101,6 @@ public class UserService implements UserDetailsService, IUserService{
 			}else {
 				UserEntity nUser = userConverter.toEntity(user);
 				String image = "default.png";
-				nUser.setImage(image);
 				nUser.setUrl(helpService.getSiteURL(req)+"/downloadFile/"+image);
 		        RoleEntity role = roleService.findByName("USER");
 		        nUser.setPassword(bcryptEncoder.encode(user.getPassword()));
@@ -107,14 +124,16 @@ public class UserService implements UserDetailsService, IUserService{
 					e.printStackTrace();
 				}
 		         userRepository.save(nUser);
+		         CreateCart(nUser);
 		         response.setMessage("Đăng kí thành công, vui lòng kiểm tra email để kích hoạt tài khoản !");
 		         response.setObject(userConverter.toDTO(nUser));
+		         return ResponseEntity.ok(response);
 			}
 		} catch (DataIntegrityViolationException e) {
 			response.setMessage("Tên đăng nhập hoặc email đã tồn tại");
 			return ResponseEntity.badRequest().body(response);
 		}
-        return ResponseEntity.ok(response);
+        
 	}
 
 
@@ -139,18 +158,22 @@ public class UserService implements UserDetailsService, IUserService{
 			message = "kích hoạt thành công";
 			user.setToken("");
 			user.setStatus(1);
-			userRepository.save(user);
-			CartEntity cart = new CartEntity();
-			cart.setUser(user);
-			cart.setTotalPrice(0.0);
-			cart.setTotalQuantity(0);
-			cartRepository.save(cart);
-			
+			userRepository.save(user);	
 		}else {
 			message = "mã kích hoạt không tồn tại hoặc tài khoản đã được kích hoạt";
 		}
 		
 		return message;
+	}
+	
+	public void CreateCart(UserEntity user) {
+		CartEntity cart = new CartEntity();
+		if(cartRepository.findByUser(user)==null) {
+			cart.setUser(user);
+			cart.setTotalPrice(0.0);
+			cart.setTotalQuantity(0);
+			cartRepository.save(cart);
+		}
 	}
 
 	@Override
@@ -221,6 +244,7 @@ public class UserService implements UserDetailsService, IUserService{
 		String message;
 		if(BCrypt.checkpw(user.getPassword(), nUser.getPassword())) {
 			nUser.setFullName(user.getFullname());
+			nUser.setUrl(user.getUrl());
 			nUser.setSex(user.getSex());
 			nUser.setAddress(user.getAddress());
 			nUser.setPhone(user.getPhone());
@@ -235,16 +259,17 @@ public class UserService implements UserDetailsService, IUserService{
 
 	@Override
 	public MessageDTO uploadImage(MultipartFile file, HttpServletRequest req) {
-		String filename = fileStorageService.storeFile(file);
-		String url = helpService.getSiteURL(req)+"/downloadFile/"+filename;
-		UserEntity user = userRepository.findByUserName(helpService.getName(req));
-		if(!user.getImage().equals("default.png")) {
-			fileStorageService.deleteFile(user.getImage());
-		}
-		user.setImage(filename);
-		user.setUrl(url);
-		userRepository.save(user);
-		return new MessageDTO("Thêm ảnh thành công");
+//		String filename = fileStorageService.storeFile(file);
+//		String url = helpService.getSiteURL(req)+"/downloadFile/"+filename;
+//		UserEntity user = userRepository.findByUserName(helpService.getName(req));
+//		if(!user.getImage().equals("default.png")) {
+//			fileStorageService.deleteFile(user.getImage());
+//		}
+//		user.setImage(filename);
+//		user.setUrl(url);
+//		userRepository.save(user);
+//		return new MessageDTO("Thêm ảnh thành công");
+		return null;
 	}
 
 
@@ -262,4 +287,129 @@ public class UserService implements UserDetailsService, IUserService{
 		return new MessageDTO(message);
 	}
 
+
+	@Override
+	public Page<UserAdminDTO> showAll(Integer page) {
+		Page<UserAdminDTO> result = new Page<>();
+		List<UserAdminDTO> list = new ArrayList<>();
+		Integer index ;
+		try {
+			if(page<=0) {
+				index = 1;
+			}else {
+				index = page;
+			}
+		} catch (NullPointerException e) {
+			index = 1;
+		}
+		Pageable pageable = new PageRequest(index-1, PAGE_LIMIT, Direction.ASC,"id");
+		for(UserEntity each : userRepository.findAll(pageable)) {
+			list.add(userAdminConverter.toDTO(each));
+		}
+		result.setPage(index);
+		result.setTotalPage((int) Math.ceil((double)userRepository.findAll().size()/PAGE_LIMIT));
+		result.setList(list);
+		return result;
+	}
+
+
+	@Override
+	public ResponseEntity<?> showOne(Long id) {
+		ResponseDTO<UserAdminDTO> result = new ResponseDTO<>();
+		UserAdminDTO user = userAdminConverter.toDTO(userRepository.findOne(id));
+		if(user!=null) {
+			result.setMessage(user.getUsername());
+			result.setObject(user);
+			return ResponseEntity.ok(result);
+		}else {
+			result.setMessage("Không tìm thấy hoặc user id không hợp lệ");
+			return ResponseEntity.badRequest().body(result);
+		}
+	}
+
+
+	@Override
+	public ResponseEntity<?> save(InputUser input, HttpServletRequest req) {
+		ResponseDTO<UserAdminDTO> result = new ResponseDTO<>();
+		try {		
+				UserEntity user = userRepository.findOne(input.getId());
+				if(user!=null) {
+					if(roleRepository.findOne(input.getRole())!=null) {
+						user = userAdminConverter.toEntity(input,user);
+						user.setPassword(bcryptEncoder.encode(input.getPassword()));
+						List<RoleEntity> roles = new ArrayList<>();
+						roles.add(roleRepository.findOne(input.getRole()));
+						user.setRoles(roles);
+						user.setModifiedBy(helpService.getName(req));
+						user.setModifiedDate(new Timestamp(System.currentTimeMillis()));
+						userRepository.save(user);
+						result.setMessage("Cập nhật user thành công !");
+						result.setObject(userAdminConverter.toDTO(user));
+						return ResponseEntity.ok(result);
+					}else {
+						result.setMessage("Mã role không tồn tại");
+						return ResponseEntity.badRequest().body(result);
+					}
+				}else {
+					result.setMessage("Mã user không tồn tại");
+					return ResponseEntity.badRequest().body(result);
+				}
+		} catch (DataIntegrityViolationException e) {
+			result.setMessage("Email đã tồn tại");
+			return ResponseEntity.badRequest().body(result);
+		}
+	}
+
+
+	@Override
+	public ResponseEntity<?> insert(RegisterUserAdmin input, HttpServletRequest req) {
+		ResponseDTO<UserAdminDTO> result = new ResponseDTO<>();
+		try {
+			if(roleRepository.findOne(input.getRole())!=null) {
+				UserEntity user = userAdminConverter.toEntity(input);
+				user.setPassword(bcryptEncoder.encode(input.getPassword()));
+				user.setCreatedBy(helpService.getName(req));
+				user.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+				List<RoleEntity> roles = new ArrayList<>();
+				roles.add(roleRepository.findOne(input.getRole()));
+				user.setRoles(roles);
+				userRepository.save(user);
+				if(roleRepository.findOne(input.getRole()).getName().equals("USER")) {
+					CreateCart(user);
+				}
+				result.setMessage("Tạo user thành công !");
+				result.setObject(userAdminConverter.toDTO(user));
+				return ResponseEntity.ok(result);
+			}else {
+				result.setMessage("Mã role không tồn tại");
+				return ResponseEntity.badRequest().body(result);
+			}
+		} catch (DataIntegrityViolationException e) {
+			result.setMessage("Username hoặc email đã tồn tại");
+			return ResponseEntity.badRequest().body(result);
+		}
+	}
+
+
+	@Override
+	public ResponseEntity<?> delete(Long id) {
+		ResponseDTO<UserDTO> result = new ResponseDTO<>();
+		UserEntity user = userRepository.findOne(id);
+		try {
+			if(user!=null) {
+				userRepository.delete(user);
+				result.setMessage("Xóa thành công");
+				result.setObject(userConverter.toDTO(user));
+				return ResponseEntity.ok(result);
+			}else {
+				result.setMessage("Không tìm thấy hoặc id không hợp lệ");
+				return ResponseEntity.badRequest().body(result);
+			}
+		} catch (DataIntegrityViolationException e) {
+			result.setMessage("Không thể thao tác");
+			return ResponseEntity.badRequest().body(result);
+		}
+	}
+	
+	
 }

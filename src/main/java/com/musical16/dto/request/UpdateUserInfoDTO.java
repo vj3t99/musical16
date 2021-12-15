@@ -19,6 +19,8 @@ public class UpdateUserInfoDTO {
 	@Size(min = 5, max = 20, message = "Pasword phải từ 5 đến 20 kí tự !")
 	private String password;
 	
+	private String url;
+	
 	@NotEmpty(message = "Địa chỉ không được rỗng !")
 	@Size(min = 8, max = 32, message = "Địa chỉ phải từ 8 đến 32 kí tự !")
 	private String address;
@@ -33,6 +35,13 @@ public class UpdateUserInfoDTO {
 	@Max(value = 2, message = "Giới tính phải bé hơn 2")
 	private Integer sex;
 	
+	
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
 	public String getPassword() {
 		return password;
 	}
