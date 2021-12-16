@@ -11,7 +11,7 @@ public class NewDTO extends BaseDTO{
 	private String detail;
 	private String url;
 	private Integer status;
-	private CategoryNewDTO categoryNews;
+	private Long categoryNews;
 	public String getName() {
 		return name;
 	}
@@ -49,10 +49,10 @@ public class NewDTO extends BaseDTO{
 		this.status = status;
 	}
 	
-	public CategoryNewDTO getCategoryNews() {
+	public Long getCategoryNews() {
 		return categoryNews;
 	}
-	public void setCategoryNews(CategoryNewDTO categoryNews) {
+	public void setCategoryNews(Long categoryNews) {
 		this.categoryNews = categoryNews;
 	}
 	public String getTitle() {

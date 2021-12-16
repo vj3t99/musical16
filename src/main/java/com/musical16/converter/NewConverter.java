@@ -41,7 +41,7 @@ public class NewConverter {
 		news.setShortdescription(newEntity.getShortdescription());
 		news.setDetail(newEntity.getDetail());
 		news.setUrl(newEntity.getUrl());
-		news.setCategoryNews(categoryNewConverter.toDTO(newEntity.getCategoryNews()));
+		news.setCategoryNews(categoryNewConverter.toDTO(newEntity.getCategoryNews()).getId());
 		news.setCreatedBy(newEntity.getCreatedBy());
 		news.setCreatedDate(newEntity.getCreatedDate());
 		news.setModifiedBy(newEntity.getModifiedBy());
