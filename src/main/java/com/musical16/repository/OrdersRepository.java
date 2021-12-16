@@ -11,5 +11,6 @@ import com.musical16.Entity.UserEntity;
 public interface OrdersRepository extends JpaRepository<OrdersEntity, Long>{
 
 	List<OrdersEntity> findAllByOrderByIdDesc(Pageable pageable);
-	List<OrdersEntity> findByUser(UserEntity user);
+	OrdersEntity findByIdAndUser(Long id, UserEntity user);
+	List<OrdersEntity> findByUser(UserEntity findByUserName);
 }

@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 public class InputRate {
 
-	@NotEmpty(message = "Mã đánh giá không được rỗng")
+	@NotNull(message = "Mã đánh giá không được rỗng")
 	private Long id;
 	
 	@NotEmpty(message = "Đánh giá không được rỗng")

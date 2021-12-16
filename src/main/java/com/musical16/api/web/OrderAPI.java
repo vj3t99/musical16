@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.musical16.dto.order.OrderDTO;
 import com.musical16.dto.request.InputOrderAdmin;
 import com.musical16.dto.request.InputOrderDTO;
-import com.musical16.dto.response.MessageDTO;
 import com.musical16.dto.response.Page;
 import com.musical16.service.IOrdersService;
 
@@ -43,19 +43,19 @@ public class OrderAPI {
 	}
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("/order")
-	public MessageDTO createOrder(HttpServletRequest req) {
+	public ResponseEntity<?> createOrder(HttpServletRequest req) {
 		return ordersService.createOrder(req);
 	}
 	
 	@PreAuthorize("hasRole('USER')")
 	@PutMapping("/order")
-	public MessageDTO createOrder(HttpServletRequest req, @RequestBody @Valid InputOrderDTO order) {
+	public ResponseEntity<?> createOrder(HttpServletRequest req, @RequestBody @Valid InputOrderDTO order) {
 		return ordersService.createOrder(req,order);
 	}
 	
 	@PreAuthorize("hasRole('USER')")
 	@DeleteMapping("/order/{id}")
-	public MessageDTO cancelOrder(@PathVariable("id") Long id,HttpServletRequest req) {
+	public ResponseEntity<?> cancelOrder(@PathVariable("id") Long id,HttpServletRequest req) {
 		return ordersService.cancelOrder(id,req);
 	}
 	
@@ -73,7 +73,7 @@ public class OrderAPI {
 	
 	@PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
 	@PutMapping("/manageOrder")
-	public MessageDTO updateOrder(HttpServletRequest req, @Valid @RequestBody InputOrderAdmin order) {
+	public ResponseEntity<?> updateOrder(HttpServletRequest req, @Valid @RequestBody InputOrderAdmin order) {
 		return ordersService.updateOrder(req,order);
 	}
 	

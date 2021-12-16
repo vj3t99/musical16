@@ -3,6 +3,7 @@ package com.musical16.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -18,7 +19,7 @@ public class OrdersEntity extends BaseEntity{
 	@JoinColumn(name = "user_id")
 	private UserEntity user;
 	
-	@OneToMany(mappedBy = "order")
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	private List<OrderDetailEntity> orderDetail = new ArrayList<>();
 	
 	@Column(name = "total_price")

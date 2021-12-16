@@ -8,8 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.musical16.Entity.CartDetailEntity;
 import com.musical16.Entity.CartEntity;
 import com.musical16.Entity.OrderDetailEntity;
 import com.musical16.Entity.OrdersEntity;
@@ -20,7 +22,7 @@ import com.musical16.converter.OrderConverter;
 import com.musical16.dto.order.OrderDTO;
 import com.musical16.dto.request.InputOrderAdmin;
 import com.musical16.dto.request.InputOrderDTO;
-import com.musical16.dto.response.MessageDTO;
+import com.musical16.dto.response.ResponseDTO;
 import com.musical16.repository.CartRepository;
 import com.musical16.repository.OrdersRepository;
 import com.musical16.repository.ProductRepository;
@@ -64,70 +66,100 @@ public class OrdersService implements IOrdersService {
 	}
 
 	@Override
-	public MessageDTO createOrder(HttpServletRequest req) {
-		MessageDTO message = new MessageDTO();
+	public ResponseEntity<?> createOrder(HttpServletRequest req) {
+		ResponseDTO<OrderDTO> result = new ResponseDTO<>();
 		UserEntity user = userRepository.findByUserName(helpService.getName(req));
 		CartEntity cart = cartRepository.findByUser(user);
 		OrdersEntity orderEntity = new OrdersEntity();
 		if (user != null && cart != null) {
 			ordersRepository.save(orderEntity);
-			orderEntity = orderConverter.toEntity(cart, orderEntity);
-			orderEntity.setPhone(user.getPhone());
-			orderEntity.setName(user.getFullName());
-			orderEntity.setAddress(user.getAddress());
-			orderEntity.setCreatedBy(user.getUserName());
-			orderEntity.setCreatedDate(new Timestamp(System.currentTimeMillis()));
-			ordersRepository.save(orderEntity);
-			message.setMessage("Tạo đơn hàng thành công");
-		} else {
-			message.setMessage("Tài khoản không tồn tại");
-		}
-		return message;
-	}
-
-	@Override
-	public MessageDTO createOrder(HttpServletRequest req, InputOrderDTO order) {
-		MessageDTO message = new MessageDTO();
-		UserEntity user = userRepository.findByUserName(helpService.getName(req));
-		CartEntity cart = cartRepository.findByUser(user);
-		OrdersEntity orderEntity = new OrdersEntity();
-		if (user != null && cart != null) {
-			ordersRepository.save(orderEntity);
-			orderEntity = orderConverter.toEntity(cart, orderEntity);
-			orderEntity.setPhone(order.getPhone());
-			orderEntity.setName(order.getName());
-			orderEntity.setAddress(order.getAddress());
-			orderEntity.setCreatedBy(user.getUserName());
-			orderEntity.setCreatedDate(new Timestamp(System.currentTimeMillis()));
-			ordersRepository.save(orderEntity);
-			message.setMessage("Tạo đơn hàng thành công");
-		} else {
-			message.setMessage("Tài khoản không tồn tại");
-		}
-		return message;
-	}
-
-	@Override
-	public MessageDTO cancelOrder(Long id, HttpServletRequest req) {
-		MessageDTO message = new MessageDTO();
-		UserEntity user = userRepository.findByUserName(helpService.getName(req));
-		List<OrdersEntity> list = ordersRepository.findByUser(user);
-		if(!list.isEmpty()) {
-			for(OrdersEntity each : list) {
-				if(each.getId().equals(id)&&each.getStatus().equals(0)) {
-					each.setStatus(-1);
-					each.setModifiedBy(user.getUserName());
-					each.setModifiedDate(new Timestamp(System.currentTimeMillis()));
-					ordersRepository.save(each);
-					message.setMessage("Hủy đơn hàng thành công");
-				}else {
-					message.setMessage("Bạn không thể hủy đơn hàng này");
+			boolean flag = true;
+			for(CartDetailEntity each : cart.getCartDetail()) {
+				if(each.getQuantity()>each.getProduct().getQuantity()) {
+					flag = false;
+					break;
 				}
+			}	
+			if(flag) {
+				orderEntity = orderConverter.toEntity(cart, orderEntity);
+				orderEntity.setPhone(user.getPhone());
+				orderEntity.setName(user.getFullName());
+				orderEntity.setAddress(user.getAddress());
+				orderEntity.setCreatedBy(user.getUserName());
+				orderEntity.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+				ordersRepository.save(orderEntity);
+				result.setMessage("Tạo đơn hàng thành công");
+				result.setObject(orderConverter.toDTO(orderEntity));
+				return ResponseEntity.ok(result);
+			}else {
+				result.setMessage("Chúng tôi không đủ số lượng để cung cấp, vui lòng kiểm tra lại giỏ hàng");
+				return ResponseEntity.badRequest().body(result);
+			}
+		} else {
+			result.setMessage("Đã có lỗi xảy ra !");
+			return ResponseEntity.badRequest().body(result);
+		}
+	}
+	
+
+	@Override
+	public ResponseEntity<?> createOrder(HttpServletRequest req, InputOrderDTO order) {
+		ResponseDTO<OrderDTO> result = new ResponseDTO<>();
+		UserEntity user = userRepository.findByUserName(helpService.getName(req));
+		CartEntity cart = cartRepository.findByUser(user);
+		OrdersEntity orderEntity = new OrdersEntity();
+		if (user != null && cart != null) {
+			ordersRepository.save(orderEntity);
+			boolean flag = true;
+			for(CartDetailEntity each : cart.getCartDetail()) {
+				if(each.getQuantity()>each.getProduct().getQuantity()) {
+					flag = false;
+					break;
+				}
+			}	
+			if(flag) {
+				orderEntity = orderConverter.toEntity(cart, orderEntity);
+				orderEntity.setPhone(order.getPhone());
+				orderEntity.setName(order.getName());
+				orderEntity.setAddress(order.getAddress());
+				orderEntity.setCreatedBy(user.getUserName());
+				orderEntity.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+				ordersRepository.save(orderEntity);
+				result.setMessage("Tạo đơn hàng thành công");
+				result.setObject(orderConverter.toDTO(orderEntity));
+				return ResponseEntity.ok(result);
+			}else {
+				result.setMessage("Chúng tôi không đủ số lượng để cung cấp, vui lòng kiểm tra lại giỏ hàng");
+				return ResponseEntity.badRequest().body(result);
+			}
+		} else {
+			result.setMessage("Đã có lỗi xảy ra !");
+			return ResponseEntity.badRequest().body(result);
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> cancelOrder(Long id, HttpServletRequest req) {
+		ResponseDTO<OrderDTO> result = new ResponseDTO<>();
+		UserEntity user = userRepository.findByUserName(helpService.getName(req));
+		OrdersEntity list = ordersRepository.findByIdAndUser(id,user);
+		if(list!=null) {
+			if(list.getId().equals(id)&&list.getStatus().equals(0)) {
+				list.setStatus(-1);
+				list.setModifiedBy(user.getUserName());
+				list.setModifiedDate(new Timestamp(System.currentTimeMillis()));
+				ordersRepository.save(list);
+				result.setMessage("Xóa đơn hàng thành công");
+				result.setObject(orderConverter.toDTO(list));
+				return ResponseEntity.ok(result);
+			}else {
+				result.setMessage("Đơn hàng không thể thao tác");
+				return ResponseEntity.badRequest().body(result);
 			}
 		}else {
-			message.setMessage("Bạn chưa có đơn hàng nào");
+			result.setMessage("Đơn hàng không tồn tại hoặc bạn không thể thao tác");
+			return ResponseEntity.badRequest().body(result);
 		}
-		return message;
 	}
 
 	@Override
@@ -145,32 +177,38 @@ public class OrdersService implements IOrdersService {
 	}
 
 	@Override
-	public MessageDTO updateOrder(HttpServletRequest req, InputOrderAdmin order) {
-		MessageDTO message = new MessageDTO();
+	public ResponseEntity<?> updateOrder(HttpServletRequest req, InputOrderAdmin order) {
+		ResponseDTO<OrderDTO> result = new ResponseDTO<>();
 		OrdersEntity orderEntity = ordersRepository.findOne(order.getId());
 		if(orderEntity!=null) {
 			if(orderEntity.getStatus().equals(0)) {
 				if(order.getStatus().equals(-1)) {
 					orderEntity.setStatus(0);
 					ordersRepository.save(orderEntity);
-					message.setMessage("Đã hủy đơn hàng "+orderEntity.getId()+" thành công");
+					result.setMessage("Xóa đơn hàng thành công");
+					result.setObject(orderConverter.toDTO(orderEntity));
+					return ResponseEntity.ok(result);
 				}else if(order.getStatus().equals(1)) {
 					if(updateProduct(orderEntity)) {
 						orderEntity.setStatus(1);
 						ordersRepository.save(orderEntity);
-						message.setMessage("Đơn hàng "+orderEntity.getId()+ " đã được duyệt");
+						result.setMessage("Đơn hàng "+orderEntity.getId()+ " đã được duyệt");
+						result.setObject(orderConverter.toDTO(orderEntity));
+						return ResponseEntity.ok(result);
 					}else {
-						message.setMessage("Hàng trong kho không đủ số lượng cung cấp");
+						result.setMessage("Hàng trong kho không đủ số lượng cung cấp");
+						return ResponseEntity.badRequest().body(result);
 					}
 					
 				}else {
-					message.setMessage("Thao tác không hợp lệ");
+					result.setMessage("Thao tác không hợp lệ");
+					return ResponseEntity.badRequest().body(result);
 				}
 			}else if(orderEntity.getStatus().equals(1)) {
 				if(order.getStatus().equals(2)) {
 					orderEntity.setStatus(2);
 					ordersRepository.save(orderEntity);
-					message.setMessage("Đơn hàng đã xác nhận thanh toán");
+					result.setMessage("Đơn hàng đã xác nhận thanh toán");
 					for(OrderDetailEntity each : orderEntity.getOrderDetail()) {
 						RateEntity rate = new RateEntity();
 						rate.setProduct(each.getProduct());
@@ -180,27 +218,36 @@ public class OrdersService implements IOrdersService {
 						rate.setMessage("");
 						rateRepository.save(rate);
 					}
+					result.setObject(orderConverter.toDTO(orderEntity));
+					return ResponseEntity.ok(result);
 				}else if(order.getStatus().equals(-1)){
 					returnProduct(orderEntity);
 					orderEntity.setStatus(-1);
 					ordersRepository.save(orderEntity);
-					message.setMessage("Đơn hàng đã hoàn trả thành công");
+					result.setMessage("Đơn hàng đã hoàn trả thành công");
+					result.setObject(orderConverter.toDTO(orderEntity));
+					return ResponseEntity.ok(result);
 				}else {
-					message.setMessage("Thao tác không hợp lệ");
+					result.setMessage("Thao tác không hợp lệ");
+					return ResponseEntity.badRequest().body(result);
 				}
 			}else {
-				message.setMessage("Đơn hàng này đã chốt bạn không thể thao tác");
+				result.setMessage("Đơn hàng này đã chốt bạn không thể thao tác");
+				return ResponseEntity.badRequest().body(result);
 			}
 		}else {
-			message.setMessage("Không tìm thấy mã đơn hàng hoặc mã đơn hàng không hợp lệ");
+			result.setMessage("Không tìm thấy mã đơn hàng hoặc mã đơn hàng không hợp lệ");
+			return ResponseEntity.badRequest().body(result);
 		}
-		return message;
 	}
 
 	private void returnProduct(OrdersEntity orderEntity) {
 		for(OrderDetailEntity each : orderEntity.getOrderDetail()) {
 			ProductEntity product = each.getProduct();
 			product.setQuantity(product.getQuantity()+each.getQuantity());
+			if(product.getQuantity()==0) {
+				product.setStatus(0);
+			}
 			productRepository.save(product);
 		}
 		
@@ -212,6 +259,9 @@ public class OrdersService implements IOrdersService {
 			if(each.getQuantity()<=each.getProduct().getQuantity()) {
 				ProductEntity product = each.getProduct();
 				product.setQuantity(product.getQuantity()-each.getQuantity());
+				if(product.getQuantity()==0) {
+					product.setStatus(0);
+				}
 				productRepository.save(product);
 			}else {
 				flag = false;

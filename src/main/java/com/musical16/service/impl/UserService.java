@@ -239,9 +239,9 @@ public class UserService implements UserDetailsService, IUserService{
 
 
 	@Override
-	public MessageDTO save(UpdateUserInfoDTO user, HttpServletRequest req) {
+	public ResponseEntity<?> save(UpdateUserInfoDTO user, HttpServletRequest req) {
+		ResponseDTO<UserDTO> result = new ResponseDTO<>();
 		UserEntity nUser = userRepository.findByUserName(helpService.getName(req));
-		String message;
 		if(BCrypt.checkpw(user.getPassword(), nUser.getPassword())) {
 			nUser.setFullName(user.getFullname());
 			nUser.setUrl(user.getUrl());
@@ -249,11 +249,13 @@ public class UserService implements UserDetailsService, IUserService{
 			nUser.setAddress(user.getAddress());
 			nUser.setPhone(user.getPhone());
 			userRepository.save(nUser);
-			message = "Cập nhật thông tin thành công";
+			result.setMessage("Cập nhật thông tin cá nhân thành công");
+			result.setObject(userConverter.toDTO(nUser));
+			return ResponseEntity.ok(nUser);
 		}else {
-			message = "Mật khẩu không đúng";
+			result.setMessage("Mật khẩu không chính xác");
+			return ResponseEntity.badRequest().body(result);
 		}
-		return new MessageDTO(message);
 	}
 
 
@@ -274,17 +276,19 @@ public class UserService implements UserDetailsService, IUserService{
 
 
 	@Override
-	public MessageDTO changePassword(ChangePassword user, HttpServletRequest req) {
+	public ResponseEntity<?> changePassword(ChangePassword user, HttpServletRequest req) {
+		ResponseDTO<UserDTO> result = new ResponseDTO<>();
 		UserEntity nUser = userRepository.findByUserName(helpService.getName(req));
-		String message;	
 		if(BCrypt.checkpw(user.getPassword(), nUser.getPassword())) {
 			nUser.setPassword(bcryptEncoder.encode(user.getNewPassword()));
 			userRepository.save(nUser);
-			message = "Thay đổi mật khẩu thành công";
+			result.setMessage("Thay đổi mật khẩu thành công");
+			result.setObject(userConverter.toDTO(nUser));
+			return ResponseEntity.ok(result);
 		}else {
-			message = "Mật khẩu cũ không chính xác";
+			result.setMessage("Mật khẩu cũ không chính xác");
+			return ResponseEntity.badRequest().body(result);
 		}
-		return new MessageDTO(message);
 	}
 
 
@@ -316,8 +320,9 @@ public class UserService implements UserDetailsService, IUserService{
 	@Override
 	public ResponseEntity<?> showOne(Long id) {
 		ResponseDTO<UserAdminDTO> result = new ResponseDTO<>();
-		UserAdminDTO user = userAdminConverter.toDTO(userRepository.findOne(id));
-		if(user!=null) {
+		UserEntity userEntity = userRepository.findOne(id);		
+		if(userEntity!=null) {
+			UserAdminDTO user = userAdminConverter.toDTO(userEntity);
 			result.setMessage(user.getUsername());
 			result.setObject(user);
 			return ResponseEntity.ok(result);
@@ -397,6 +402,8 @@ public class UserService implements UserDetailsService, IUserService{
 		UserEntity user = userRepository.findOne(id);
 		try {
 			if(user!=null) {
+				user.setRoles(null);
+				userRepository.save(user);
 				userRepository.delete(user);
 				result.setMessage("Xóa thành công");
 				result.setObject(userConverter.toDTO(user));

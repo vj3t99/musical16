@@ -56,7 +56,7 @@ public class ProductEntity extends BaseEntity{
 	@OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
 	private List<CartDetailEntity> cartDetail = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "productOrder",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "productOrder")
 	private List<OrderDetailEntity> orderDetail = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)

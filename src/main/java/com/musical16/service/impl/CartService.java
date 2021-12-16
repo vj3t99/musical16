@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.musical16.Entity.CartDetailEntity;
@@ -16,7 +17,8 @@ import com.musical16.Entity.UserEntity;
 import com.musical16.converter.CartDetailConverter;
 import com.musical16.dto.cart.CartDTO;
 import com.musical16.dto.cart.CartDetailDTO;
-import com.musical16.dto.response.MessageDTO;
+import com.musical16.dto.request.InputCart;
+import com.musical16.dto.response.ResponseDTO;
 import com.musical16.repository.CartDetailRepository;
 import com.musical16.repository.CartRepository;
 import com.musical16.repository.ProductRepository;
@@ -69,71 +71,82 @@ public class CartService implements ICartService {
 	}
 
 	@Override
-	public MessageDTO save(CartDetailDTO cartDetailDTO, HttpServletRequest req) {
-		MessageDTO message = new MessageDTO();
+	public ResponseEntity<?> save(InputCart input, HttpServletRequest req) {
+		ResponseDTO<CartDetailDTO> result = new ResponseDTO<>();
 		try {
 			UserEntity user = userRepository.findByUserName(helpService.getName(req));
 			CartEntity cart = cartRepository.findByUser(user);
 			CartDetailEntity cartDetail = new CartDetailEntity();		
-			ProductEntity product = productRepository.findOne(cartDetailDTO.getProductId());
+			ProductEntity product = productRepository.findOne(input.getProductId());
 			
 			//Nếu không có id chi tiết giỏ hàng thì thêm mới
-			if (cartDetailDTO.getId() == null) {
+			if (input.getId() == null) {
 				List<CartDetailEntity> listCartDetail = cartDetailRepository.findByCartAndProduct(cart, product);
 				//Nếu sản phẩm đã tồn tại trong giỏ hàng thì cộng thêm số lượng
 				if (listCartDetail.size()==1) {
 					for(CartDetailEntity each : listCartDetail)
 						cartDetail = each;
-					cartDetail.setQuantity(cartDetailDTO.getQuantity()+cartDetail.getQuantity());
+					cartDetail.setQuantity(input.getQuantity()+cartDetail.getQuantity());
 					//Kiểm tra số lượng của giỏ hàng với số lượng của kho hàng đang có
-					if (cartDetail.getQuantity()+cartDetailDTO.getQuantity() <= product.getQuantity()) {
+					if (cartDetail.getQuantity()+input.getQuantity() <= product.getQuantity()) {
 						cartDetail.setPrice(product.getPrice() * cartDetail.getQuantity());
 						cartDetail.setModifiedBy(helpService.getName(req));
 						cartDetail.setModifiedDate(new Timestamp(System.currentTimeMillis()));
 						cartDetailRepository.save(cartDetail);
-						message.setMessage("Thêm số lượng vào giỏ hàng thành công");
+						result.setMessage("Thêm số lượng vào giỏ hàng thành công");
+						result.setObject(cartDetailConverter.toDTO(cartDetail));
 						updateCart(cart);
+						return ResponseEntity.ok(result);
+						
 					} else {
-						message.setMessage("Shop chúng tôi không có đủ số lượng để cung cấp");
+						result.setMessage("Shop chúng tôi không có đủ số lượng để cung cấp");
+						return ResponseEntity.badRequest().body(result);
 					}
 				// Nếu sản phẩm không tồn tại trong giỏ hàng thì tạo 1 sản phẩm mới trong giỏ hàng
 				} else {
 					cartDetail.setCart(cart);
 					cartDetail.setProduct(product);
-					cartDetail.setQuantity(cartDetailDTO.getQuantity());
+					cartDetail.setQuantity(input.getQuantity());
 					//Kiểm tra số lượng của giỏ hàng với số lượng của kho hàng đang có
-					if (cartDetailDTO.getQuantity() <= product.getQuantity()) {
+					if (input.getQuantity() <= product.getQuantity()) {
 						cartDetail.setPrice(product.getPrice() * cartDetail.getQuantity());
 						cartDetail.setCreatedBy(helpService.getName(req));
 						cartDetail.setCreatedDate(new Timestamp(System.currentTimeMillis()));
 						cartDetailRepository.save(cartDetail);
-						message.setMessage("Thêm sản phẩm vào giỏ hàng thành công");
+						result.setMessage("Thêm sản phẩm vào giỏ hàng thành công");
+						result.setObject(cartDetailConverter.toDTO(cartDetail));
 						updateCart(cart);
+						return ResponseEntity.ok(result);
+						
 					} else {
-						message.setMessage("Shop chúng tôi không có đủ số lượng để cung cấp");
+						result.setMessage("Shop chúng tôi không có đủ số lượng để cung cấp");
+						return ResponseEntity.badRequest().body(result);
 					}
 				}
 			//Nếu có id thì sẽ cập nhật số lượng sản phẩm
 			} else {
-				cartDetail = cartDetailRepository.findOne(cartDetailDTO.getId());		
-				cartDetail.setQuantity(cartDetailDTO.getQuantity());
+				cartDetail = cartDetailRepository.findOne(input.getId());		
+				cartDetail.setQuantity(input.getQuantity());
 				//Kiểm tra số lượng của giỏ hàng với số lượng của kho hàng đang có
-				if (cartDetailDTO.getQuantity() <= cartDetail.getProduct().getQuantity()) {
+				if (input.getQuantity() <= cartDetail.getProduct().getQuantity()) {
 					cartDetail.setPrice(cartDetail.getProduct().getPrice() * cartDetail.getQuantity());
 					cartDetail.setModifiedBy(helpService.getName(req));
 					cartDetail.setModifiedDate(new Timestamp(System.currentTimeMillis()));
 					cartDetailRepository.save(cartDetail);
-					message.setMessage("Cập nhật số lượng sản phẩm thành công");
+					result.setMessage("Cập nhật số lượng sản phẩm thành công");
+					result.setObject(cartDetailConverter.toDTO(cartDetail));
 					updateCart(cart);
+					return ResponseEntity.ok(result);
 				} else {
-					message.setMessage("Shop chúng tôi không có đủ hàng để cung cấp");
+					result.setMessage("Shop chúng tôi không có đủ hàng để cung cấp");
+					return ResponseEntity.badRequest().body(result);
 				}
 
 			}
 		} catch (NullPointerException e) {
-			message.setMessage("Sản phẩm không tồn tại hoặc giỏ hàng của bạn chưa được tạo");
+			result.setMessage("Sản phẩm không tồn tại hoặc giỏ hàng của bạn chưa được tạo");
+			return ResponseEntity.badRequest().body(result);
 		}
-		return message;
 	}
 	
 	private void updateCart(CartEntity cart) {
@@ -152,24 +165,24 @@ public class CartService implements ICartService {
 	}
 
 	@Override
-	public MessageDTO delete(Long id, HttpServletRequest req) {
-		MessageDTO message = new MessageDTO();
+	public ResponseEntity<?> delete(Long id, HttpServletRequest req) {
+		ResponseDTO<CartDetailDTO> result = new ResponseDTO<>();
 		CartEntity cart = cartRepository.findByUser(userRepository.findByUserName(helpService.getName(req)));
 		if(cart!=null) {
-			List<CartDetailEntity> list = cartDetailRepository.findByCartAndProduct(cart, productRepository.findOne(id));
-			if(!list.isEmpty()) {
-				for(CartDetailEntity each : list) {
-					cartDetailRepository.delete(each);
-				}
-				message.setMessage("Xóa sản phẩm thành công khỏi giỏ hàng");
+			CartDetailEntity detail = cartDetailRepository.findByIdAndCart(id,cart);
+			if(detail!=null) {
+				cartDetailRepository.delete(detail);
+				result.setMessage("Xóa chi tiết giỏ hàng thành công");
+				result.setObject(cartDetailConverter.toDTO(detail));
+				return ResponseEntity.ok(result);
 			}else {
-				message.setMessage("Sản phẩm này không có trong giỏ hàng");
+				result.setMessage("Chi tiết giỏ hàng không tồn tại");
+				return ResponseEntity.badRequest().body(result);
 			}
-			updateCart(cart);
 		}else {
-			message.setMessage("Giỏ hàng không tồn tại");
+			result.setMessage("Giỏ hàng không tồn tại");
+			return ResponseEntity.badRequest().body(result);
 		}
-		return message;
 	}
 
 }

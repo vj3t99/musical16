@@ -1,5 +1,6 @@
 package com.musical16.dto.request;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -8,7 +9,7 @@ public class InputRateReply{
 
 	private Long id;
 	
-	@NotEmpty(message = "Mã đánh giá không được rỗng")
+	@NotNull(message = "Mã đánh giá không được rỗng")
 	private Long rateId;
 	
 	@NotEmpty(message = "Phản hồi đánh giá không được rỗng")

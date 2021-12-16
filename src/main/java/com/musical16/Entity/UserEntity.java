@@ -55,22 +55,22 @@ public class UserEntity extends BaseEntity {
 	inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private List<RoleEntity> roles = new ArrayList<>();
 	
-	@OneToOne(mappedBy = "user")
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private CartEntity cart;
 	
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<OrdersEntity> order = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<CommentEntity> comment = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<CommentReplyEntity> commentReply = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<RateEntity> rate = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<RateReplyEntity> rateReply = new ArrayList<>();
 
 	public String getUserName() {

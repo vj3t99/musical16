@@ -4,16 +4,9 @@ import com.musical16.dto.BaseDTO;
 import com.musical16.dto.response.UserDTO;
 
 public class RateReplyDTO extends BaseDTO{
-	private Long rateId;
 	private UserDTO user;
 	private String message;
 	private Integer status;
-	public Long getRateId() {
-		return rateId;
-	}
-	public void setRateId(Long rateId) {
-		this.rateId = rateId;
-	}
 	public UserDTO getUser() {
 		return user;
 	}

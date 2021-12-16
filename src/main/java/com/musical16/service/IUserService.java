@@ -30,11 +30,11 @@ public interface IUserService {
 
 	public MessageDTO resetpassword(String token);
 
-	public MessageDTO save(UpdateUserInfoDTO user, HttpServletRequest req) throws Exception;
+	public ResponseEntity<?> save(UpdateUserInfoDTO user, HttpServletRequest req) throws Exception;
 
 	public MessageDTO uploadImage(MultipartFile file, HttpServletRequest req);
 
-	public MessageDTO changePassword(ChangePassword user, HttpServletRequest req);
+	public ResponseEntity<?> changePassword(ChangePassword user, HttpServletRequest req);
 
 	public Page<UserAdminDTO> showAll(Integer page);
 

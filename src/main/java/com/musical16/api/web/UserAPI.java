@@ -62,16 +62,16 @@ public class UserAPI {
 
     
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER','ADMIN','MANAGER')")
 	@GetMapping("/userinfo")
 	public UserDTO getUser(HttpServletRequest req) {
     	String username = helpService.getName(req);
 		return userService.findOne(username);
 	}
     
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER','ADMIN','MANAGER')")
     @PostMapping("/userinfo")
-    public MessageDTO updateUser(@Valid @RequestBody UpdateUserInfoDTO user, HttpServletRequest req) throws Exception {
+    public ResponseEntity<?> updateUser(@Valid @RequestBody UpdateUserInfoDTO user, HttpServletRequest req) throws Exception {
     	return userService.save(user, req);
     }
     
@@ -98,6 +98,7 @@ public class UserAPI {
 	        	tokendto.setToken(token);
 	            tokendto.setMessage("Đăng nhập thành công");
 	            tokendto.setUser(userConverter.toDTO(userRepository.findByUserName(name)));
+	            return ResponseEntity.ok(tokendto);
 	        }else {
 	        	tokendto.setMessage("Tài khoản chưa kích hoạt, vui lòng kiểm tra email để kích hoạt");
 	        	return ResponseEntity.badRequest().body(tokendto);
@@ -110,7 +111,6 @@ public class UserAPI {
 			tokendto.setMessage("Thông tin đăng nhập không hợp lệ");
 			return ResponseEntity.badRequest().body(tokendto);
 		}
-		return ResponseEntity.ok(tokendto);
 	}
 	
 	@PostMapping(value="/register")
@@ -136,7 +136,7 @@ public class UserAPI {
 	}
 	@PreAuthorize("hasAnyRole('USER','MANAGER','ADMIN')")
 	@PostMapping(value = "/changepassword")
-	public MessageDTO changePassword(@Valid @RequestBody ChangePassword user, HttpServletRequest req ) {
+	public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePassword user, HttpServletRequest req ) {
 		return userService.changePassword(user,req);
 	}
 	
