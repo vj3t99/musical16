@@ -251,7 +251,7 @@ public class UserService implements UserDetailsService, IUserService{
 			userRepository.save(nUser);
 			result.setMessage("Cập nhật thông tin cá nhân thành công");
 			result.setObject(userConverter.toDTO(nUser));
-			return ResponseEntity.ok(nUser);
+			return ResponseEntity.ok(result);
 		}else {
 			result.setMessage("Mật khẩu không chính xác");
 			return ResponseEntity.badRequest().body(result);
