@@ -20,6 +20,7 @@ public class NewConverter {
 		news.setShortdescription(input.getShortdescription());
 		news.setDetail(input.getDetail());
 		news.setUrl(input.getUrl());
+		news.setStatus(input.getStatus());
 		return news;
 	}
 
@@ -29,6 +30,7 @@ public class NewConverter {
 		news.setShortdescription(input.getShortdescription());
 		news.setDetail(input.getDetail());
 		news.setUrl(input.getUrl());
+		news.setStatus(input.getStatus());
 		return news;
 	}
 

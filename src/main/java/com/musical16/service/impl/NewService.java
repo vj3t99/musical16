@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -105,39 +106,44 @@ public class NewService implements INewService{
 	public ResponseEntity<?> save(InputNew input, HttpServletRequest req) {
 		ResponseDTO<NewDTO> result = new ResponseDTO<>();
 		NewEntity news = new NewEntity();
-		if(input.getId()!=null) {
-			if(categoryNewRepository.findOne(input.getCategoryNews())!=null) {
-				news = newRepository.findOne(input.getId());
-				NewEntity nNew = newConverter.toEntity(input,news);
-				CategoryNewEntity category = categoryNewRepository.findOne(input.getCategoryNews());
-				nNew.setTitle("["+category.getName()+"]"+" "+nNew.getName());
-				nNew.setCategoryNews(category);
-				nNew.setModifiedBy(helpService.getName(req));
-				nNew.setModifiedDate(new Timestamp(System.currentTimeMillis()));
-				newRepository.save(nNew);
-				result.setMessage("Cập nhật thành công bài viết " + nNew.getName());
-				result.setObject(newConverter.toDTO(nNew));
-				return ResponseEntity.ok(result);
+		try {
+			if(input.getId()!=null) {
+				if(categoryNewRepository.findOne(input.getCategoryNews())!=null) {
+					news = newRepository.findOne(input.getId());
+					NewEntity nNew = newConverter.toEntity(input,news);
+					CategoryNewEntity category = categoryNewRepository.findOne(input.getCategoryNews());
+					nNew.setTitle("["+category.getName()+"]"+" "+nNew.getName());
+					nNew.setCategoryNews(category);
+					nNew.setModifiedBy(helpService.getName(req));
+					nNew.setModifiedDate(new Timestamp(System.currentTimeMillis()));
+					newRepository.save(nNew);
+					result.setMessage("Cập nhật thành công bài viết " + nNew.getName());
+					result.setObject(newConverter.toDTO(nNew));
+					return ResponseEntity.ok(result);
+				}else {
+					result.setMessage("không tìm thấy mã thể loại bài viết : "+input.getCategoryNews());
+					return ResponseEntity.badRequest().body(result);
+				}
 			}else {
-				result.setMessage("không tìm thấy mã thể loại bài viết : "+input.getCategoryNews());
-				return ResponseEntity.badRequest().body(result);
+				if(categoryNewRepository.findOne(input.getCategoryNews())!=null) {
+					news = newConverter.toEntity(input);
+					CategoryNewEntity category = categoryNewRepository.findOne(input.getCategoryNews());
+					news.setTitle("["+category.getName()+"]"+" "+news.getName());
+					news.setCategoryNews(category);
+					news.setCreatedBy(helpService.getName(req));
+					news.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+					newRepository.save(news);
+					result.setMessage("Thêm bài viết "+ news.getName() + " thành công");
+					result.setObject(newConverter.toDTO(news));
+					return ResponseEntity.ok(result);
+				}else {
+					result.setMessage("không tìm thấy mã thể loại bài viết : "+input.getCategoryNews());
+					return ResponseEntity.badRequest().body(result);
+				}
 			}
-		}else {
-			if(categoryNewRepository.findOne(input.getCategoryNews())!=null) {
-				news = newConverter.toEntity(input);
-				CategoryNewEntity category = categoryNewRepository.findOne(input.getCategoryNews());
-				news.setTitle("["+category.getName()+"]"+" "+news.getName());
-				news.setCategoryNews(category);
-				news.setCreatedBy(helpService.getName(req));
-				news.setCreatedDate(new Timestamp(System.currentTimeMillis()));
-				newRepository.save(news);
-				result.setMessage("Thêm bài viết "+ news.getName() + " thành công");
-				result.setObject(newConverter.toDTO(news));
-				return ResponseEntity.ok(result);
-			}else {
-				result.setMessage("không tìm thấy mã thể loại bài viết : "+input.getCategoryNews());
-				return ResponseEntity.badRequest().body(result);
-			}
+		} catch (DataIntegrityViolationException e) {
+			result.setMessage("Tên bài viết đã tồn tại, vui lòng thử lại tên khác");
+			return ResponseEntity.badRequest().body(result);
 		}
 	}
 

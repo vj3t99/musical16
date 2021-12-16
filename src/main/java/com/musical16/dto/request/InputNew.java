@@ -24,11 +24,14 @@ public class InputNew {
 	@Size(min = 20, message = "Chi tiết phải lớn hơn 20 kí tự")
 	private String detail;
 	
-	@Size(min = 5, max = 255, message = "Vui lòng nhập url trong khoảng 5 đến 255 kí tự")
 	private String url;
 	
 	@NotNull(message = "Mã thể loại bài viết không được rỗng !")
 	private Long categoryNews;
+	
+	@NotNull(message = "Bạn chưa nhập status cho bài viết")
+	private Integer status;
+	
 	public Long getId() {
 		return id;
 	}
@@ -71,5 +74,12 @@ public class InputNew {
 	public void setCategoryNews(Long categoryNews) {
 		this.categoryNews = categoryNews;
 	}
+	public Integer getStatus() {
+		return status;
+	}
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	
 	
 }
