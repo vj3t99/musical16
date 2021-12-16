@@ -1,6 +1,8 @@
 package com.musical16.service;
 
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,8 @@ public interface INewService {
 	NewDTO findOne(Long id);
 
 	MessageDTO uploadImage(MultipartFile file, Long id, HttpServletRequest req);
+
+	List<NewDTO> showAll();
 
 
 }

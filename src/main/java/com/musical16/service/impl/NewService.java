@@ -180,6 +180,15 @@ public class NewService implements INewService{
 		return message;
 	}
 
+	@Override
+	public List<NewDTO> showAll() {
+		List<NewDTO> result = new ArrayList<>();
+		for(NewEntity each : newRepository.findAll()) {
+			result.add(newConverter.toDTO(each));
+		}
+		return result;
+	}
+
 
 	
 }

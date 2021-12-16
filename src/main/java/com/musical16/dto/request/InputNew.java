@@ -24,7 +24,6 @@ public class InputNew {
 	@Size(min = 20, message = "Chi tiết phải lớn hơn 20 kí tự")
 	private String detail;
 	
-	@NotEmpty(message = "Url không được rỗng !")
 	@Size(min = 5, max = 255, message = "Vui lòng nhập url trong khoảng 5 đến 255 kí tự")
 	private String url;
 	

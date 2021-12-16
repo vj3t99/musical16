@@ -1,6 +1,8 @@
 package com.musical16.api.admin;
 
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -56,5 +58,10 @@ public class NewAPI {
 	@DeleteMapping("/new/{id}")
 	public ResponseEntity<?> delele(@PathVariable("id") Long id) {
 		return newService.delete(id);
+	}
+	
+	@GetMapping("/admin/new")
+	public List<NewDTO> showAll(){
+		return newService.showAll();
 	}
 }
