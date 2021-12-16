@@ -19,7 +19,7 @@ public interface IProductService {
 
 	public ResponseEntity<?> findOne(long id);
 
-	public Page<ProductDTO> search(String key, Integer page);
+	public Page<ProductDTO> search(String key, Integer page, String[] sort, Long id);
 
 	public ResponseEntity<?> showAll();
 }

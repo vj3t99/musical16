@@ -60,6 +60,7 @@ public class NewAPI {
 		return newService.delete(id);
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/admin/new")
 	public List<NewDTO> showAll(){
 		return newService.showAll();

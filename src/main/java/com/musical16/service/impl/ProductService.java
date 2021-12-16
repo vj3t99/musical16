@@ -52,9 +52,10 @@ public class ProductService implements IProductService{
 	private ProductRepository productRepository;
 	
 	@Override
-	public Page<ProductDTO> search(String key, Integer page) {
+	public Page<ProductDTO> search(String key, Integer page, String[] sort, Long id) {
 		Page<ProductDTO> result = new Page<>();
 		List<ProductDTO> list = new ArrayList<>();
+		List<Order> listorders = new ArrayList<>();
 		Integer index ;
 		try {
 			if(page<=1) {
@@ -65,12 +66,38 @@ public class ProductService implements IProductService{
 		} catch (NullPointerException e) {
 			index = 1;
 		}
-		Pageable pageable = new PageRequest(index-1, PAGE_LIMIT, Direction.ASC, "id");
-		for(ProductEntity each : productRepository.search(key, pageable)) {
+		
+		try {
+			for(String each : sort) {
+				if(each.equals("gia-thap-den-cao")) {
+					listorders.add(new Order(Direction.ASC, "price"));
+				}else if(each.equals("gia-cao-den-thap")) {
+					listorders.add(new Order(Direction.DESC, "price"));
+				}else if(each.equals("z-a")) {
+					listorders.add(new Order(Direction.DESC, "name"));
+				}else if(each.equals("a-z")) {
+					listorders.add(new Order(Direction.ASC, "name"));
+				}
+			}
+		} catch (NullPointerException e) {
+			listorders.add(new Order(Direction.DESC, "id"));
+		}
+		
+		Sort sorts = new Sort(listorders);
+		Pageable pageable = new PageRequest(index -1, PAGE_LIMIT, sorts);
+		org.springframework.data.domain.Page<ProductEntity> listEntity = null;
+		if(id!=null) {
+			CategoryEntity category = categoryRepository.findOne(id);
+			listEntity = productRepository.search(key, category, pageable);
+			result.setTotalPage((int) Math.ceil((double) productRepository.search(key, category).size()/PAGE_LIMIT));
+		}else {
+			listEntity = productRepository.search(key, pageable);
+			result.setTotalPage((int) Math.ceil((double) productRepository.search(key).size()/PAGE_LIMIT));
+		}
+		for(ProductEntity each : listEntity) {
 			list.add(productConverter.toDTO(each));
 		}
 		result.setPage(index);
-		result.setTotalPage((int)Math.ceil((double) productRepository.search(key).size()/PAGE_LIMIT));
 		result.setList(list);
 		return result;
 	}

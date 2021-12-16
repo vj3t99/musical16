@@ -28,8 +28,8 @@ public class ProductAPI {
 	private IProductService productService;
 	
 	@GetMapping("/search/{key}")
-	public Page<ProductDTO> search(@PathVariable(value = "key",required = false) String key, @RequestParam(value = "page", required = false) Integer page){
-		return productService.search(key, page);
+	public Page<ProductDTO> search(@PathVariable(value = "key",required = false) String key, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "sort", required = false) String[] sort, @RequestParam(value = "category", required = false) Long id){
+		return productService.search(key, page, sort, id);
 	}
 
 	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
