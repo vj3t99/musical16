@@ -117,7 +117,7 @@ public class UserService implements UserDetailsService, IUserService{
 		        String token = RandomStringUtils.random(20, true, true);
 		        nUser.setToken(token);
 		        nUser.setRoles(roleSet);
-		        String link = helpService.getSiteURL(req) + "/activation?token=" + nUser.getToken();
+		        String link = "musical16.herokuapp.com" + "/activation?token=" + nUser.getToken();
 		         try {
 					mailHelp.sendHtmlEmailActive(nUser.getEmail(), link);
 				} catch (MessagingException e) {
