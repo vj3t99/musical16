@@ -86,15 +86,15 @@ public class NewService implements INewService{
 		Pageable pageable = new PageRequest(index - 1, PAGE_LIMIT , sorts);
 		if(id!=null) {
 			CategoryNewEntity category = categoryNewRepository.findOne(id);
-			for(NewEntity each : newRepository.findByCategoryNews(category, pageable)) {
+			for(NewEntity each : newRepository.findByCategoryNewsAndStatus(category,1, pageable)) {
 				newDTO.add(newConverter.toDTO(each));
 			}
-			result.setTotalPage((int) Math.ceil((double) newRepository.findByCategoryNews(category, pageable).size()/PAGE_LIMIT));
+			result.setTotalPage((int) Math.ceil((double) newRepository.findByCategoryNewsAndStatus(category,1).size()/PAGE_LIMIT));
 		}else {	
-			for(NewEntity each : newRepository.findAll(pageable)) {
+			for(NewEntity each : newRepository.findByStatus(1,pageable)) {
 				newDTO.add(newConverter.toDTO(each));
 			}
-			result.setTotalPage((int) Math.ceil((double) newRepository.findAll(pageable).getSize()/PAGE_LIMIT));
+			result.setTotalPage((int) Math.ceil((double) newRepository.findByStatus(1).size()/PAGE_LIMIT));
 		}
 		
 		result.setPage(index);

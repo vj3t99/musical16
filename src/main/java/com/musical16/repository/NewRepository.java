@@ -11,5 +11,8 @@ import com.musical16.Entity.NewEntity;
 public interface NewRepository extends JpaRepository<NewEntity, Long>{
 
 	NewEntity findByCode(String code);
-	List<NewEntity> findByCategoryNews(CategoryNewEntity category, Pageable pageable );
+	List<NewEntity> findByCategoryNewsAndStatus(CategoryNewEntity category, Integer status, Pageable pageable );
+	List<NewEntity> findByCategoryNewsAndStatus(CategoryNewEntity category, Integer status);
+	List<NewEntity> findByStatus(Integer status, Pageable pageable);
+	List<NewEntity> findByStatus(Integer status);
 }
