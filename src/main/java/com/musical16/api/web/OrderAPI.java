@@ -7,8 +7,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.musical16.dto.order.OrderDTO;
 import com.musical16.dto.request.InputOrderAdmin;
 import com.musical16.dto.request.InputOrderDTO;
-import com.musical16.dto.response.Page;
 import com.musical16.service.IOrdersService;
 
 @RestController
@@ -61,14 +58,8 @@ public class OrderAPI {
 	
 	@PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
 	@GetMapping("/manageOrder")
-	public Page<OrderDTO> showAll(@RequestParam("page") Integer page){
-		Page<OrderDTO> order = new Page<>();
-		Integer number = page;
-		order.setPage(page);
-		Pageable pageable = new PageRequest(number - 1, LIMIT_ITEM );
-		order.setList(ordersService.findAll(pageable));
-		order.setTotalPage((int) Math.ceil((double) ordersService.totalItem()/LIMIT_ITEM));
-		return order;
+	public List<OrderDTO> showAll(@RequestParam("page") Integer page){
+		return ordersService.findAll();
 	}
 	
 	@PreAuthorize("hasAnyRole('MANAGER','ADMIN')")

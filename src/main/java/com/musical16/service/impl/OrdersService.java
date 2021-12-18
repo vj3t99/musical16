@@ -7,7 +7,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -168,9 +167,9 @@ public class OrdersService implements IOrdersService {
 	}
 
 	@Override
-	public List<OrderDTO> findAll(Pageable pageable) {
+	public List<OrderDTO> findAll() {
 		List<OrderDTO> list = new ArrayList<>();
-		for(OrdersEntity each : ordersRepository.findAllByOrderByIdDesc(pageable)) {
+		for(OrdersEntity each : ordersRepository.findAll()) {
 			list.add(orderConverter.toDTO(each));
 		}
 		return list;
@@ -269,6 +268,4 @@ public class OrdersService implements IOrdersService {
 		}
 		return flag;
 	}
-
-
 }

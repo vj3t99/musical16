@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import com.musical16.dto.order.OrderDTO;
@@ -23,7 +22,7 @@ public interface IOrdersService {
 	
 	Long totalItem();
 
-	List<OrderDTO> findAll(Pageable pageable);
+	List<OrderDTO> findAll();
 
 	ResponseEntity<?> updateOrder(HttpServletRequest req, InputOrderAdmin order);
 
