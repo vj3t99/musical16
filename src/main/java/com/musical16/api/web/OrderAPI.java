@@ -58,7 +58,7 @@ public class OrderAPI {
 	
 	@PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
 	@GetMapping("/manageOrder")
-	public List<OrderDTO> showAll(@RequestParam("page") Integer page){
+	public List<OrderDTO> showAll(){
 		return ordersService.findAll();
 	}
 	
