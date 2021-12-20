@@ -82,17 +82,19 @@ public class ProductService implements IProductService{
 		} catch (NullPointerException e) {
 			listorders.add(new Order(Direction.DESC, "id"));
 		}
-		
+		if(listorders.isEmpty()) {
+			listorders.add(new Order(Direction.DESC, "id"));
+		}
 		Sort sorts = new Sort(listorders);
 		Pageable pageable = new PageRequest(index -1, PAGE_LIMIT, sorts);
 		org.springframework.data.domain.Page<ProductEntity> listEntity = null;
 		if(id!=null) {
 			CategoryEntity category = categoryRepository.findOne(id);
-			listEntity = productRepository.search(key, category, pageable);
-			result.setTotalPage((int) Math.ceil((double) productRepository.search(key, category).size()/PAGE_LIMIT));
+			listEntity = productRepository.search(key.toLowerCase(), category, pageable);
+			result.setTotalPage((int) Math.ceil((double) productRepository.search(key.toLowerCase(), category).size()/PAGE_LIMIT));
 		}else {
-			listEntity = productRepository.search(key, pageable);
-			result.setTotalPage((int) Math.ceil((double) productRepository.search(key).size()/PAGE_LIMIT));
+			listEntity = productRepository.search(key.toLowerCase(), pageable);
+			result.setTotalPage((int) Math.ceil((double) productRepository.search(key.toLowerCase()).size()/PAGE_LIMIT));
 		}
 		for(ProductEntity each : listEntity) {
 			list.add(productConverter.toDTO(each));
@@ -131,7 +133,9 @@ public class ProductService implements IProductService{
 		} catch (NullPointerException e) {
 			listorders.add(new Order(Direction.DESC, "id"));
 		}
-		
+		if(listorders.isEmpty()) {
+			listorders.add(new Order(Direction.DESC, "id"));
+		}
 		Sort sorts = new Sort(listorders);
 		Pageable pageable = new PageRequest(index -1, PAGE_LIMIT, sorts);
 		org.springframework.data.domain.Page<ProductEntity> listEntity = null;

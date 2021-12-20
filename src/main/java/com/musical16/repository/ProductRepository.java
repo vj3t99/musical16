@@ -18,16 +18,16 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>{
 	
 	ProductEntity findByCode(String code);
 	
-	@Query("SELECT p FROM ProductEntity p WHERE CONCAT(p.name, p.price) LIKE %?1%")
+	@Query("SELECT p FROM ProductEntity p WHERE CONCAT(p.name) LIKE %?1%")
 	List<ProductEntity> search(String keyword);
 	
-	@Query("SELECT p FROM ProductEntity p WHERE CONCAT(p.name, p.price) LIKE %?1%")
+	@Query("SELECT p FROM ProductEntity p WHERE CONCAT(p.name) LIKE %?1%")
 	Page<ProductEntity> search(String keyword, Pageable pageable);
 	
-	@Query("SELECT p FROM ProductEntity p WHERE CONCAT(p.name, p.price) LIKE %?1% AND p.categories = ?2")
+	@Query("SELECT p FROM ProductEntity p WHERE CONCAT(p.name) LIKE %?1% AND p.categories = ?2")
 	Page<ProductEntity> search(String keyword, CategoryEntity category,Pageable pageable);
 	
-	@Query("SELECT p FROM ProductEntity p WHERE CONCAT(p.name, p.price) LIKE %?1% AND p.categories = ?2")
+	@Query("SELECT p FROM ProductEntity p WHERE CONCAT(p.name) LIKE %?1% AND p.categories = ?2")
 	List<ProductEntity> search(String keyword, CategoryEntity category);
 	
 	Page<ProductEntity> findByCategories(CategoryEntity category, Pageable pageable);
