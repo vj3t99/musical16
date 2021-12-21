@@ -12,12 +12,16 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.musical16.dto.rate.RateDTO;
 import com.musical16.dto.request.InputRate;
+import com.musical16.dto.request.InputRateAdmin;
 import com.musical16.dto.request.InputRateReply;
+import com.musical16.dto.response.Page;
 import com.musical16.service.IRateService;
 
 @RestController
@@ -32,6 +36,11 @@ public class RateAPI {
 		return rateService.showAllRate();
 	}
 	
+	@GetMapping("/rate/{id}")
+	public Page<RateDTO> showRatePruct(@PathVariable("id") Long id,@RequestParam(value = "page",required = false) Integer page){
+		return rateService.showRateProduct(id,page);
+	}
+	
 	@PreAuthorize("hasRole('USER')")
 	@GetMapping("/rate")
 	public List<RateDTO> showRateUser(HttpServletRequest req){
@@ -42,6 +51,12 @@ public class RateAPI {
 	@PostMapping("/rate")
 	public ResponseEntity<?> save(@Valid @RequestBody InputRate input, HttpServletRequest req){
 		return rateService.save(input, req);
+	}
+	
+	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
+	@PutMapping("/rate")
+	public ResponseEntity<?> update(@Valid @RequestBody InputRateAdmin input, HttpServletRequest req){
+		return rateService.update(input, req);
 	}
 	
 	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")

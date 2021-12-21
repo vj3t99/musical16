@@ -1,5 +1,7 @@
 package com.musical16.service;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.ResponseEntity;
@@ -12,7 +14,6 @@ import com.musical16.dto.request.RegisterDTO;
 import com.musical16.dto.request.RegisterUserAdmin;
 import com.musical16.dto.request.UpdateUserInfoDTO;
 import com.musical16.dto.response.MessageDTO;
-import com.musical16.dto.response.Page;
 import com.musical16.dto.response.UserAdminDTO;
 import com.musical16.dto.response.UserDTO;
 
@@ -36,7 +37,7 @@ public interface IUserService {
 
 	public ResponseEntity<?> changePassword(ChangePassword user, HttpServletRequest req);
 
-	public Page<UserAdminDTO> showAll(Integer page);
+	public List<UserAdminDTO> showAll();
 
 	public ResponseEntity<?> showOne(Long id);
 

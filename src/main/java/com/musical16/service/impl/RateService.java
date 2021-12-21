@@ -7,6 +7,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
@@ -22,7 +25,9 @@ import com.musical16.converter.RateReplyConverter;
 import com.musical16.dto.rate.RateDTO;
 import com.musical16.dto.rate.RateReplyDTO;
 import com.musical16.dto.request.InputRate;
+import com.musical16.dto.request.InputRateAdmin;
 import com.musical16.dto.request.InputRateReply;
+import com.musical16.dto.response.Page;
 import com.musical16.dto.response.ResponseDTO;
 import com.musical16.repository.ProductRepository;
 import com.musical16.repository.RateReplyRepository;
@@ -34,6 +39,9 @@ import com.musical16.service.IRateService;
 @Service
 public class RateService implements IRateService {
 
+	@Value("${jpa.page.limit}")
+	private Integer PAGE_LIMIT;
+	
 	@Autowired
 	private UserRepository userRepository;
 	
@@ -185,6 +193,49 @@ public class RateService implements IRateService {
 			RateDTO rateDTO = rateConverter.toDTO(each);
 			result.add(rateDTO);
 		}
+		return result;
+	}
+
+	@Override
+	public ResponseEntity<?> update(InputRateAdmin input, HttpServletRequest req) {
+		ResponseDTO<RateDTO> result = new ResponseDTO<>();
+		RateEntity rate = rateRepository.findOne(input.getId());
+		if(rate!=null) {
+			rate.setStatus(input.getStatus());
+			rate.setModifiedBy(helpService.getName(req));
+			rate.setModifiedDate(new Timestamp(System.currentTimeMillis()));
+			rateRepository.save(rate);
+			result.setMessage("Cập nhật trạng thái đánh giá thành công");
+			result.setObject(rateConverter.toDTO(rate));
+			return ResponseEntity.ok(result);
+		}else {
+			result.setMessage("Mã đánh giá không tồn tại");
+			return ResponseEntity.badRequest().body(result);
+		}
+	}
+
+	@Override
+	public Page<RateDTO> showRateProduct(Long id, Integer page) {
+		Page<RateDTO> result = new Page<>();
+		ProductEntity productEntity = productRepository.findOne(id);
+		Integer index;
+		try {
+			if(page==null||page<=0) {
+				index = 1;
+			}else {
+				index = page;
+			}
+		} catch (NullPointerException e) {
+			index = 1;
+		}
+		Pageable pageable = new PageRequest(index - 1, PAGE_LIMIT);
+		List<RateDTO> list = new ArrayList<>();
+		for(RateEntity each : rateRepository.findByProductAndFlag(productEntity, true, pageable)) {
+			list.add(rateConverter.toDTO(each));
+		}
+		result.setList(list);
+		result.setPage(index);
+		result.setTotalPage((int)Math.ceil((double) rateRepository.findByProductAndFlag(productEntity, true).size()/PAGE_LIMIT) );
 		return result;
 	}
 

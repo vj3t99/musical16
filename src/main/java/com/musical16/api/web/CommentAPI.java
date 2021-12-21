@@ -1,5 +1,7 @@
 package com.musical16.api.web;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -54,4 +56,23 @@ public class CommentAPI {
 	public ResponseEntity<?> deleteReply(@PathVariable("id") Long id, HttpServletRequest req){
 		return commentService.deleteReply(id,req);
 	}
+	
+	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
+	@GetMapping("/admin/comment")
+	public List<CommentDTO> showAll(){
+		return commentService.showAllComment();
+	}
+	
+	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
+	@DeleteMapping("/admin/comment/{id}")
+	public ResponseEntity<?> adminDelete(@PathVariable("id") Long id){
+		return commentService.delete(id);
+	}
+	
+	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
+	@DeleteMapping("/admin/commentReply/{id}")
+	public ResponseEntity<?> adminDeleteReply(@PathVariable("id") Long id){
+		return commentService.deleteReply(id);
+	}
+	
 }

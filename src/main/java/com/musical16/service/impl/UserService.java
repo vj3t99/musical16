@@ -13,9 +13,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -40,7 +37,6 @@ import com.musical16.dto.request.RegisterDTO;
 import com.musical16.dto.request.RegisterUserAdmin;
 import com.musical16.dto.request.UpdateUserInfoDTO;
 import com.musical16.dto.response.MessageDTO;
-import com.musical16.dto.response.Page;
 import com.musical16.dto.response.ResponseDTO;
 import com.musical16.dto.response.UserAdminDTO;
 import com.musical16.dto.response.UserDTO;
@@ -293,27 +289,12 @@ public class UserService implements UserDetailsService, IUserService{
 
 
 	@Override
-	public Page<UserAdminDTO> showAll(Integer page) {
-		Page<UserAdminDTO> result = new Page<>();
+	public List<UserAdminDTO> showAll() {
 		List<UserAdminDTO> list = new ArrayList<>();
-		Integer index ;
-		try {
-			if(page<=0) {
-				index = 1;
-			}else {
-				index = page;
-			}
-		} catch (NullPointerException e) {
-			index = 1;
-		}
-		Pageable pageable = new PageRequest(index-1, PAGE_LIMIT, Direction.ASC,"id");
-		for(UserEntity each : userRepository.findAll(pageable)) {
+		for(UserEntity each : userRepository.findAll()) {
 			list.add(userAdminConverter.toDTO(each));
 		}
-		result.setPage(index);
-		result.setTotalPage((int) Math.ceil((double)userRepository.findAll().size()/PAGE_LIMIT));
-		result.setList(list);
-		return result;
+		return list;
 	}
 
 
@@ -417,6 +398,8 @@ public class UserService implements UserDetailsService, IUserService{
 			return ResponseEntity.badRequest().body(result);
 		}
 	}
+
+
 	
 	
 }

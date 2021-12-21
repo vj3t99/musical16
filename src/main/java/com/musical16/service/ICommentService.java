@@ -1,5 +1,7 @@
 package com.musical16.service;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.ResponseEntity;
@@ -20,5 +22,11 @@ public interface ICommentService {
 	ResponseEntity<?> saveReply(InputCommentReply comment, HttpServletRequest req);
 
 	ResponseEntity<?> deleteReply(Long id, HttpServletRequest req);
+
+	List<CommentDTO> showAllComment();
+
+	ResponseEntity<?> delete(Long id);
+
+	ResponseEntity<?> deleteReply(Long id);
 
 }

@@ -24,13 +24,14 @@ import com.musical16.dto.request.RegisterDTO;
 import com.musical16.dto.request.RegisterUserAdmin;
 import com.musical16.dto.request.UpdateUserInfoDTO;
 import com.musical16.dto.response.MessageDTO;
-import com.musical16.dto.response.Page;
 import com.musical16.dto.response.TokenDTO;
 import com.musical16.dto.response.UserAdminDTO;
 import com.musical16.dto.response.UserDTO;
 import com.musical16.repository.UserRepository;
 import com.musical16.service.IHelpService;
 import com.musical16.service.IUserService;
+
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -142,8 +143,8 @@ public class UserAPI {
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/admin/user")
-	public Page<UserAdminDTO> showAll(@RequestParam(value = "page", required = false) Integer page){
-		return userService.showAll(page);
+	public List<UserAdminDTO> showAll(){
+		return userService.showAll();
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")

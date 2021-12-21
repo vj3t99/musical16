@@ -8,7 +8,9 @@ import org.springframework.http.ResponseEntity;
 
 import com.musical16.dto.rate.RateDTO;
 import com.musical16.dto.request.InputRate;
+import com.musical16.dto.request.InputRateAdmin;
 import com.musical16.dto.request.InputRateReply;
+import com.musical16.dto.response.Page;
 
 public interface IRateService {
 
@@ -23,5 +25,9 @@ public interface IRateService {
 	ResponseEntity<?> deleteReply(Long id, HttpServletRequest req);
 
 	List<RateDTO> showAllRate();
+
+	ResponseEntity<?> update(InputRateAdmin input, HttpServletRequest req);
+
+	Page<RateDTO> showRateProduct(Long id, Integer page);
 
 }

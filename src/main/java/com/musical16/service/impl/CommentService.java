@@ -80,8 +80,7 @@ public class CommentService implements ICommentService{
 		}
 		result.setList(list);
 		result.setPage(index);
-		List<CommentEntity> temp = commentRepository.findByProduct(productEntity);
-		result.setTotalPage(temp.size());
+		result.setTotalPage((int)Math.ceil((double) commentRepository.findByProduct(productEntity).size()/PAGE_LIMIT));
 		return result;
 	}
 
@@ -193,6 +192,45 @@ public class CommentService implements ICommentService{
 			return ResponseEntity.ok(result);
 		}else {
 			result.setMessage("Bạn không thể xóa phản hồi bình luận này");
+			return ResponseEntity.badRequest().body(result);
+		}
+	}
+
+	@Override
+	public List<CommentDTO> showAllComment() {
+		List<CommentDTO> list = new ArrayList<>();
+		for(CommentEntity each : commentRepository.findAll()) {
+			list.add(commentConverter.toDTO(each));
+		}
+		return list;
+	}
+
+	@Override
+	public ResponseEntity<?> delete(Long id) {
+		ResponseDTO<CommentDTO> result = new ResponseDTO<>();
+		CommentEntity commentEntity = commentRepository.findOne(id);
+		if(commentEntity!=null) {
+			commentRepository.delete(commentEntity);
+			result.setMessage("Xóa bình luận thành công");
+			result.setObject(commentConverter.toDTO(commentEntity));
+			return ResponseEntity.ok(result);
+		}else {
+			result.setMessage("Mã bình luận không tồn tại");
+			return ResponseEntity.badRequest().body(result);
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> deleteReply(Long id) {
+		ResponseDTO<CommentReplyDTO> result = new ResponseDTO<>();
+		CommentReplyEntity commentReplyEntity = commentReplyRepository.findOne(id);
+		if(commentReplyEntity!=null) {
+			commentReplyRepository.delete(commentReplyEntity);
+			result.setMessage("Xóa phản hồi bình luận thành công");
+			result.setObject(commentReplyConverter.toDTO(commentReplyEntity));
+			return ResponseEntity.ok(result);
+		}else {
+			result.setMessage("Mã phản hồi bình luận không tồn tại");
 			return ResponseEntity.badRequest().body(result);
 		}
 	}
