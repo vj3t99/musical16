@@ -383,12 +383,17 @@ public class UserService implements UserDetailsService, IUserService{
 		UserEntity user = userRepository.findOne(id);
 		try {
 			if(user!=null) {
-				user.setRoles(null);
-				userRepository.save(user);
-				userRepository.delete(user);
-				result.setMessage("Xóa thành công");
-				result.setObject(userConverter.toDTO(user));
-				return ResponseEntity.ok(result);
+				if(!user.getStatus().equals(0)||isAdmin(user.getRoles())) {
+					result.setMessage("Bạn không thể xóa tài khoản này");
+					return ResponseEntity.badRequest().body(result);
+				}else {
+					user.setRoles(null);
+					userRepository.save(user);
+					userRepository.delete(user);
+					result.setMessage("Xóa thành công");
+					result.setObject(userConverter.toDTO(user));
+					return ResponseEntity.ok(result);
+				}
 			}else {
 				result.setMessage("Không tìm thấy hoặc id không hợp lệ");
 				return ResponseEntity.badRequest().body(result);
@@ -397,6 +402,17 @@ public class UserService implements UserDetailsService, IUserService{
 			result.setMessage("Không thể thao tác");
 			return ResponseEntity.badRequest().body(result);
 		}
+		
+	}
+
+
+	private boolean isAdmin(List<RoleEntity> roles) {
+		for(RoleEntity each : roles) {
+			if(each.getName().equals("ADMIN")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 
