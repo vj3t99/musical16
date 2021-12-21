@@ -268,4 +268,33 @@ public class OrdersService implements IOrdersService {
 		}
 		return flag;
 	}
+
+	@Override
+	public ResponseEntity<?> findAll(HttpServletRequest req, Long id) {
+		ResponseDTO<OrderDTO> result = new ResponseDTO<>();
+		UserEntity user = userRepository.findByUserName(helpService.getName(req));
+		OrdersEntity order = ordersRepository.findByIdAndUser(id, user);
+		if(order!=null) {
+			result.setMessage("Thành công");
+			result.setObject(orderConverter.toDTO(order));
+			return ResponseEntity.ok(order);
+		}else {
+			result.setMessage("Bạn không thể xem đơn hàng này hoặc đơn hàng này không tồn tại");
+			return ResponseEntity.badRequest().body(result);
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> findOne(Long id) {
+		ResponseDTO<OrderDTO> result = new ResponseDTO<>();
+		OrdersEntity order = ordersRepository.findOne(id);
+		if(order!=null) {
+			result.setMessage("Thành công");
+			result.setObject(orderConverter.toDTO(order));
+			return ResponseEntity.ok(order);
+		}else {
+			result.setMessage("Đơn hàng này không tồn tại");
+			return ResponseEntity.badRequest().body(result);
+		}
+	}
 }

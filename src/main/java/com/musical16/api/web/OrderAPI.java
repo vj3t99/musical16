@@ -37,6 +37,13 @@ public class OrderAPI {
 	public List<OrderDTO> findAll(HttpServletRequest req){
 		return ordersService.findAll(req);
 	}
+	
+	@PreAuthorize("hasRole('USER')")
+	@GetMapping("/order/{id}")
+	public ResponseEntity<?> findOne(HttpServletRequest req, @PathVariable("id") Long id){
+		return ordersService.findAll(req, id);
+	}
+	
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("/order")
 	public ResponseEntity<?> createOrder(HttpServletRequest req) {
@@ -59,6 +66,12 @@ public class OrderAPI {
 	@GetMapping("/manageOrder")
 	public List<OrderDTO> showAll(){
 		return ordersService.findAll();
+	}
+	
+	@PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
+	@GetMapping("/manageOrder/{id}")
+	public ResponseEntity<?> showOne(@PathVariable("id")Long id){
+		return ordersService.findOne(id);
 	}
 	
 	@PreAuthorize("hasAnyRole('MANAGER','ADMIN')")

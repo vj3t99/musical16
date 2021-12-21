@@ -26,5 +26,9 @@ public interface IOrdersService {
 
 	ResponseEntity<?> updateOrder(HttpServletRequest req, InputOrderAdmin order);
 
+	ResponseEntity<?> findAll(HttpServletRequest req, Long id);
+
+	ResponseEntity<?> findOne(Long id);
+
 
 }
