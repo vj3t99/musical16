@@ -29,13 +29,13 @@ public class OriginAPI {
 		return originService.findAll();	
 	}
 	
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
 	@PostMapping(value = "/origin")
 	public ResponseEntity<?> save(@Valid @RequestBody OriginDTO categoryDTO, HttpServletRequest req) {
 		return originService.save(categoryDTO,req);
 		
 	}
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
 	@DeleteMapping(value = "/origin/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") long id) {
 		 return originService.delete(id);

@@ -29,13 +29,13 @@ public class CategoryNewAPI {
 	}
 	
 	
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
 	@PostMapping("/categoryNew")
 	public ResponseEntity<?> insert(@RequestBody CategoryNewDTO categoryNew, HttpServletRequest req) {
 		return categoryNewService.save(categoryNew, req);
 	}
 	
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
 	@DeleteMapping("/categoryNew/{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id) {
 		return categoryNewService.delete(id);

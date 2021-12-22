@@ -47,14 +47,14 @@ public class ProductAPI {
 		return productService.findOne(id);
 	}
 	
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
 	@PostMapping("/product")
 	public ResponseEntity<?> save(@Valid @RequestBody InputProduct input, HttpServletRequest req) {
 		return productService.save(input, req);
 	}
 	
 	
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
 	@DeleteMapping("/product/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") Long id) {
 		return productService.delete(id);

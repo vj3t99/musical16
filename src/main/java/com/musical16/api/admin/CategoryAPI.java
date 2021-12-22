@@ -29,12 +29,12 @@ public class CategoryAPI {
 		return categoryService.findAll();	
 	}
 	
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
 	@PostMapping(value = "/category")
 	public ResponseEntity<?> save(@Valid @RequestBody CategoryDTO categoryDTO, HttpServletRequest req) {
 		return categoryService.save(categoryDTO,req);
 	}
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
 	@DeleteMapping(value = "/category/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") long id) {
 		 return categoryService.delete(id);
